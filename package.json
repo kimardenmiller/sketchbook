@@ -1,0 +1,19 @@
+{
+  "name": "Front-end JS Sketchbook Boilerplate",
+  "version": "0.1.0",
+  "description": "Boilerplate project demonstrating how to incorporate JamJS and RequireJS against many shared experiments (or 'sketches')",
+  "dependencies": {
+    "q": null
+  },
+  "jam": {
+    "packageDir": "public/lib/",
+    "baseUrl": "public",
+    "dependencies": {
+      "jquery": "1.9.1",
+      "lodash": "1.0.1",
+      "backbone": "0.9.10",
+      "d3": "3.0.6",
+      "bootstrap": "2.2.2"
+    }
+  }
+}
