@@ -23,18 +23,19 @@ require(["/sketchbook_config.js"], function() {
    *
    * Now that we have sketchbook-wide configuration, do a normal require() call to load your desired packages and
    * sketch modules:
-   *   - "d3": A JamJS package, defined in the master JamJS configuration.
+   *   - "jquery": A JamJS package, defined in the master JamJS configuration.
    *   - "boilerplate/ExampleView": ExampleView.js file in this folder.
    *       Note that we also could have required it as "_sketch_boilerplate_/ExampleView".  The reason why
-   *       "boilerplate/ExampleView" works is because we aliased the (verbose) "_sketch_boilerplate_" as just
-   *       "boilerplate" in sketchbook_config.js with the "paths" configuration.
+   *       "boilerplate/ExampleView" works is because we aliased the (intentionally verbose) "_sketch_boilerplate_" as
+   *       just "boilerplate" in sketchbook_config.js with the "paths" configuration.
    */
   require(
-    ["d3", "boilerplate/ExampleView"],
-    function(d3, ExampleView) {
-      console.log("Is d3 loaded?  Should be:", d3);
+    ["jquery", "boilerplate/ExampleView"],
+    function($, ExampleView) {
 
-      var v1 = new ExampleView();
+      var v1 = new ExampleView({
+        el: $("#example-view-el")
+      });
       v1.render();
     }
   );
