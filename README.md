@@ -15,18 +15,18 @@ example boilerplate brings in some of those frameworks, but you can easily add o
 We often understand what patterns are by understanding how they're related to other patterns.  In that respect,
 js-sketchbook-boilerplate:
 * __is NOT a heavyweight production build system__
-  * Goal is to make experiments using best-practices like modularization, dependency management, and unit testing.
+  * Goal is to quickly make experiments using best-practices like modularization, dependency management, and unit testing.
   "Production-ready" build processes like compilation, minification, etc. are out of scope.  For such concerns, look at
   tools like [Grunt](http://gruntjs.com/) or projects like [Backbone Boilerplate](https://github.com/tbranyen/backbone-boilerplate)
   * That being said, the goal is to start developing your prototypes using modularization and unit-testing from the
-  beginning so they can be brought into "production-ready" processes.  "Heavyweight", therefore, is an admittingly fuzzy
+  beginning so they can be brought into "production-ready" processes.  "Heavyweight", therefore, is an admittedly fuzzy
   line.
 * __does NOT concern itself with serverside issues__
   * We are starting to see some really amazing front-end-only projects out there.  The goal of js-sketchbook-boilerplate
   is to rapidly experiment with these front-end-only ideas.  Therefore, server-side concerns are out of scope.
 * __is NOT the only way of doing this stuff__
   * Do you really need RequireJS and unit testing for a quick D3 experiment?  Not always.  But if you plan on building
-  your sketch into a more full-fledged project, it's helpful.  Decide if your intentions warrent the complexity of
+  your sketch into a more full-fledged project, it's helpful.  Decide if your intentions warrant the complexity of
   these patterns.
   * This project chose RequireJS's AMD modularization over the [CommonJS](https://www.google.com/search?q=AMD+vs.+commonjs)
   format.  This project chose [Jasmine](http://pivotal.github.com/jasmine/) for in-browser unit testing over
