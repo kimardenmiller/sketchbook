@@ -69,30 +69,39 @@ one boilerplate example that demonstrates how to incorporate all the features to
 
 # Anatomy of a Sketch
 The JS Sketchbook Boilerplate is all about establishing patterns to help you get started on your project without setting
-up all the best-practices infrastructure.  The following is a description of how each JS Sketchbook Boilerplate
-component contributes to this project's particular good-practice pattern:
-* __/:__ Project root
-    * __package.json:__ Add any projects you want to incorporate into your sketch in the `jam.dependencies` attribute.  Run
-    `$ jam install` from project root to download the dependencies.
-    * __/public/:__ Sketches live here
-        * __/public/lib/:__ Jam packages get downloaded here.  Because we use JamJS's RequireJS configuration, any module here
-        can be automatically referenced in your RequireJS statements (eg `define(["backbone"], function(Backbone) {...})`)
-        * __/public/sketchbook_config.js:__ Common RequireJS configuration for sketches.  Don't really need to do anything here
-        unless you're doing advanced features like aliasing, etc.
-        * __/public/_sketch_boilerplate_/:__ Example Sketch module -- you will put your sketches into similar `/public/`
-        subdirectories
-            * __/public/_sketch_boilerplate_/index.html:__ Stand-alone sketch HTML.  Note how RequireJS is being loaded here,
-            then do the same for your sketches
-            * __/public/_sketch_boilerplate_/main.js:__ Main RequireJS bootstrapping script for your sketch.  Note how it first
-            loads `sketchbook_config.js` before loading your sketch's dependencies and then kicking everything off.
-            * __/public/_sketch_boilerplate_/ExampleView.js:__ Example sketch contents. Create one JS file or create many,
-            whatever you need to implement your idea.  They will all get loaded using main.js or RequireJS's dependency
-            management.
-    * __/test/:__ Jasmine-based Unit Tests live here.  NOTE: To run unit tests, you start a webserver in the project root,
-    while to view sketches you start a webserver in `/public/`.  (TODO: Make this less awkward?)
-        * __/test/test_config.js:__ RequireJS file-path correction configuration.  No need to modify.
-        * __/test/index.html:__ File that runs all unit tests when opened in the browser.  As you add test specs, you add them
-        to this file to run them.
-        * __/test/_sketch_boilerplate_/:__ Example test spec for the example sketch.  Directory naming should mirror your
-        sketch naming in `/public/`.
+up all the best-practices infrastructure from scratch.  The following is a description of how each JS Sketchbook
+Boilerplate component contributes to this project's particular good-practice pattern.
 
+To add your own sketches to this base-pattern, all you really need to understand is `public/_sketch_boilerplate_` for
+the sketch pattern, `test/_sketch_boilerplate_` for the unit test pattern, and the JamJS `package.json` attributes
+for adding your own dependency projects.
+
+```
+.
+├─ package.json              --> Add any projects you want to incorporate into your sketch in the "jam.dependencies"
+|                                attribute.  Run "$ jam install" from project root to download the dependencies.
+├─ public/                   --> Sketches live here
+|  ├─ lib/                   --> Jam packages get downloaded here.  Because we use JamJS's RequireJS configuration, any
+|  |                             module here can be automatically referenced in your RequireJS statements
+|  |                             (eg define(["backbone"], function(Backbone) {...}) )
+|  ├─ sketchbook_config.js   --> Common RequireJS configuration for sketches.  Don't really need to do anything here
+|  |                             unless you're doing advanced features like aliasing, etc.
+|  ├─ _sketch_boilerplate_/  --> Example Sketch module -- you will put your sketches into similar `/public/` subdirectories
+|     ├─ index.html          --> Stand-alone sketch HTML.  Note how RequireJS is being loaded here, then do the same for
+|     |                          your sketches
+|     ├─ main.js             --> Main RequireJS bootstrapping script for your sketch.  Note how it first loads
+|     |                          `sketchbook_config.js` before loading your sketch's dependencies and then kicking
+|     |                          everything off.
+|     ├─ ExampleView.js      --> Example sketch contents. Create one JS file or create many, whatever you need to
+|                                implement your idea.  They will all get loaded using main.js or RequireJS's dependency
+|                                management.
+├─ test/                     --> Jasmine-based Unit Tests live here.  NOTE: To run unit tests, you start a webserver in
+   |                             the project root, while to view sketches you start a webserver in `/public/`.
+   |                             (TODO: Make this less awkward?)
+   ├─ test_config.js         --> RequireJS file-path correction configuration.  No need to modify.
+   ├─ index.html             --> File that runs all unit tests when opened in the browser.  As you add test specs, you
+   |                             add them to this file to run them.
+   ├─ _sketch_boilerplate_/  --> Example test spec for the example sketch.  Directory naming should mirror your
+      |                          sketch naming in `/public/`.
+      ├─ ExampleViewTest.js  --> Example unit test
+```
