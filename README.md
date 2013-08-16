@@ -1,7 +1,7 @@
 js-sketchbook-boilerplate
 =========================
 
-Boilerplate best-practice patterns (well, a particular good-practice pattern) for modular front-end javascript
+Boilerplate best-practice patterns (well, *a particular* pattern) for modular front-end javascript
  prototyping ('sketching').
 
 Incorporate JamJS for package management, RequireJS for dependency injection/modularization, and Jasmine for front-end
@@ -22,17 +22,19 @@ js-sketchbook-boilerplate:
   beginning so they can be brought into "production-ready" processes.  "Heavyweight", therefore, is an admittedly fuzzy
   line.
 * __does NOT concern itself with serverside issues__
-  * We are starting to see some really amazing front-end-only projects out there.  The goal of js-sketchbook-boilerplate
-  is to rapidly experiment with these front-end-only ideas.  Therefore, server-side concerns are out of scope.
+  * The goal of js-sketchbook-boilerplate is to rapidly experiment in a browser-like environment.
+    Check out NodeJS for serverside javascript.
 * __is NOT the only way of doing this stuff__
   * Do you really need RequireJS and unit testing for a quick D3 experiment?  Not always.  But if you plan on building
   your sketch into a more full-fledged project, it's helpful.  Decide if your intentions warrant the complexity of
   these patterns.
   * This project chose RequireJS's AMD modularization over the [CommonJS](https://www.google.com/search?q=AMD+vs.+commonjs)
   format.  This project chose [Jasmine](http://pivotal.github.com/jasmine/) for in-browser unit testing over
-  alternatives like [Mocha](http://visionmedia.github.com/mocha/) and [Chai](http://chaijs.com/).  To some extent these
+  alternatives like [Mocha](http://visionmedia.github.com/mocha/) and [Chai](http://chaijs.com/). [JamJS](http://jamjs.org/)
+  was chosen because it promised ready-to-use javascript packaging (but NPM seems to be the victor these days... TODO.)
+  * To some extent these
   decisions were made for simplicity, and to some extent these decisions were made based on the author's familiarity.
-  There are lots of ways to do this stuff, but at the end of the day you need to pick one.
+  There are lots of ways to do this stuff, but at the end of the day you pick one.
 
 # Setup
 The sketchbook requires [NodeJS](http://nodejs.org/) to install [JamJS](http://jamjs.org/), a javascript package manager
@@ -43,8 +45,7 @@ To setup the sketchbook:
 * `$ jam install`
 
 This downloads distributions of major javascript projects that your prototyping code can use:
-* [jquery](http://jquery.com/): You're probably using it.  If not, you probably should be, or you know enough about it
-to know why you're not using it.
+* [jquery](http://jquery.com/): You're probably using it.
 * [Backbone](http://backbonejs.org/) and [Lodash](http://lodash.com/) ([Underscore](http://underscorejs.org/)
 replacement): MVC library for javascript
 * [d3](http://d3js.org/): Visualization fun for visual thinkers
