@@ -40,6 +40,8 @@ js-sketchbook-boilerplate:
 The sketchbook requires [NodeJS](http://nodejs.org/) to install [JamJS](http://jamjs.org/), a javascript package manager
 tailored specifically for front-end assets.  Major javascript projects generally tend to have a JamJS package.
 
+** DEPRECATION NOTICE: ** JamJS looks to be on the decline.  Starting to move away from it towards manual packaging or NPM.
+
 To setup the sketchbook:
 * `$ npm install jam`
 * `$ jam install`
@@ -49,6 +51,7 @@ This downloads distributions of major javascript projects that your prototyping 
 * [Backbone](http://backbonejs.org/) and [Lodash](http://lodash.com/) ([Underscore](http://underscorejs.org/)
 replacement): MVC library for javascript
 * [d3](http://d3js.org/): Visualization fun for visual thinkers
+    * Note: JamJS looks to be on the decline.  For now, the latest D3 is being packaged manually in lib-user/.
 * [Bootstrap](http://twitter.github.com/bootstrap/): CSS and UI toolbox
 
 These downloaded files are then accessible through RequireJS modular conventions.  Your favorite dependency can be added
