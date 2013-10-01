@@ -51,8 +51,13 @@ This downloads distributions of major javascript projects that your prototyping 
 * [Backbone](http://backbonejs.org/) and [Lodash](http://lodash.com/) ([Underscore](http://underscorejs.org/)
 replacement): MVC library for javascript
 * [d3](http://d3js.org/): Visualization fun for visual thinkers
-    * Note: JamJS looks to be on the decline.  For now, the latest D3 is being packaged manually in lib-user/.
+    * *: Note: JamJS looks to be on the decline.  For now, D3 v3.3.2 is being packaged manually in lib-user/.
 * [Bootstrap](http://twitter.github.com/bootstrap/): CSS and UI toolbox
+    * *:JamJS on decline.  Packaged manually in lib-user
+* [FontAwesome](http://fortawesome.github.io/Font-Awesome/): Extension of glyphicons
+    * *:JamJS on decline.  Packaged manually in lib-user
+* RequireJS [tpl](https://github.com/ZeeAgency/requirejs-tpl) plugin: underscore templates as require modules
+    * *:JamJS on decline.  Packaged manually in lib-user
 
 These downloaded files are then accessible through RequireJS modular conventions.  Your favorite dependency can be added
 by modifying the `jam.dependencies` attribute of `package.json`.

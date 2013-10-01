@@ -19,7 +19,9 @@ require.config({
 
     //-------
     // jamjs sucks and is outdated.  Start adding manual js libraries.
-    "d3": "/lib-user/d3.v3.min"
+    "d3": "/lib-user/d3.v3.3.2.min",
+    "bootstrap": "/lib-user/bootstrap_232/js/bootstrap.min",
+    "tpl": "/lib-user/tpl",
   },
 
   shim: {
