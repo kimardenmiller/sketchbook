@@ -5,10 +5,10 @@ my virtual moleskin: a javascript playground
 
 Sketches
 ==========
-- plot/ (Sept 2013)
-    - Attempt at reusable D3 plot areas
-- oscillator/ (Nov 2013)
-    - Experiments visualizing oscillator equations
+- plot/
+    - Sept 2013: Attempt at reusable D3 plot areas
+- oscillator/
+    - Nov 2013: Experiments visualizing oscillator equations
 
 
 ==========
