@@ -1,0 +1,17 @@
+{
+  "name": "js-sketchbook-boilerplate",
+  "version": "0.0.1",
+  "description": "Boilerplate patterns for front-end javascript prototyping ('sketching'). Incorporate JamJS for package management, RequireJS for dependency injection/modularization, and Jasmine for front-end unit testing.",
+  "dependencies": {
+  },
+  "jam": {
+    "packageDir": "public/lib/",
+    "baseUrl": "public",
+    "dependencies": {
+      "jasmine": null,
+      "jquery": "1.9.1",
+      "lodash": "1.0.1",
+      "backbone": "0.9.10"
+    }
+  }
+}
