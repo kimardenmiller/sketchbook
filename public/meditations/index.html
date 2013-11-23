@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <title>Collegiate Meditations</title>
+
+  <link rel="stylesheet" href="/lib/bootstrap-core/css/bootstrap.min.css">
+
+  <style type="text/css">
+
+circle.node {
+  cursor: pointer;
+  stroke-width: 1.5px;
+}
+
+
+circle.node.highlight,
+circle.node.highlight.semihighlight { /* highlight "takes priority" over semihighlight */
+  stroke: red;
+  stroke-width: 1.5px;
+}
+
+circle.node.semihighlight {
+  stroke: red;
+  stroke-width: 1px;
+  stroke-opacity: .75;
+}
+
+line.link {
+  fill: none;
+  stroke: #ddd; /*#9ecae1;*/
+  stroke-width: 1.5px;
+}
+
+
+body {
+  font: 10px sans-serif;
+}
+
+.bar rect {
+  shape-rendering: crispEdges;
+}
+
+.bar text {
+  fill: #fff;
+  cursor:default;
+}
+
+.axis path, .axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.comment-hover {
+  position: absolute;
+  top: -500px;
+  left: -500px;
+  z-index: 10;
+  background-color: #efefef;
+  width: 500px;
+  cursor: default;
+}
+.comment-hover .author {
+  font-weight: bold;
+}
+.comment-hover .date {
+  padding-left: 15px;
+}
+
+  </style>
+
+</head>
+
+<body>
+  <!-- Load sketch: load JamJS's requireJs, but reference the experiment's main.js to start your sketch -->
+  <script data-main="main"
+    src="/lib/require.js"></script>
+
+  <div class="row-fluid">
+
+    <div class="span4" id="author_force"></div>
+    <div class="span4" id="comment_force"></div>
+  </div>
+
+
+
+
+
+
+</body>
+</html>
+
