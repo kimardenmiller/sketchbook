@@ -5,12 +5,69 @@ define(
   ],
   function($, _, promiseMottos) {
 
+    /**
+     * A lot of words are connector words -- don't really tell us about the subject or the action.
+     * Lets filter those out (this list is kinda subjective... my high school grammar teacher would require a bit more
+     * of a methodical approach here...)
+     */
+    var DO_IGNORE = true,
+        IGNORE_LIST = [
+          'a'       ,
+          'an'      ,
+          'and'     ,
+          'any'     ,
+          'are'     ,
+          'as'      ,
+          'be'      ,
+          'but'     ,
+          'by'      ,
+          'does'    ,
+          'for'     ,
+          'from'    ,
+          'had'     ,
+          'has'     ,
+          'his'     ,
+          'how'     ,
+          'in'      ,
+          'into'    ,
+          'is'      ,
+          "it's"    ,
+          'its'     ,
+          'let'     ,
+          'not'     ,
+          'of'      ,
+          'or'      ,
+          'our'     ,
+          'shall'   ,
+          'so'      ,
+          'than'    ,
+          'that'    ,
+          'the'     ,
+          'then'    ,
+          'this'    ,
+          'those'   ,
+          'through' ,
+          'to'      ,
+          'unto'    ,
+          'was'     ,
+          'where'   ,
+          'who'     ,
+          'with'    ,
+          'without' ,
+          'would'   ,
+          'ye'      ];
+    var IGNORE_INDEX = {};
+    IGNORE_LIST.forEach(function(w) {
+      IGNORE_INDEX[w] = true;
+    });
+
     var promiseWordNodes = $.Deferred();
 
     promiseMottos
     .done(function(mottos) {
 
-      var wordNodesIndex = {};
+      var wordNodesIndex = {},
+          wordNodesLinks = [];
 
       var words;
       mottos.forEach(function(m) {
@@ -18,18 +75,23 @@ define(
 
         var mottosWordNodes = [];
 
-        // Create word nodes for each word in the motto
+        // Create word nodes for each word in the motto (as long as it's not in the ignore list)
         words.forEach(function(w) {
+          // Skip if we're ignoring this word
+          if (DO_IGNORE && IGNORE_INDEX[w])
+            return;
+
           if (!wordNodesIndex[w]) {
             wordNodesIndex[w] = {
               id: w,
               count: 0, // number of occurances of the word in all mottos
               mottos: [],
-              relatedWordNodes: {
+              links: {
                 /* example key/value schema:
                  * theRelatedWord: {
+                 *   source: <the wordNode>
+                 *   target: <the other word node>
                  *   numSharedMottos: 0,
-                 *   wordNode: {the word node}
                  * }
                  */
               }
@@ -55,23 +117,33 @@ define(
             }
 
             // create the link meta if it doesn't exist
-            if (!(otherWn.id in wn.relatedWordNodes)) {
-              wn.relatedWordNodes[otherWn.id] = {
-                wordNode: otherWn,
-                numSharedMottos: 0,
-                sharedMottos: [],
-              };
+            if (!wn.links[otherWn.id]) {
+              // check if the link exists from the other direction
+              if (otherWn.links[wn.id]) {
+                wn.links[otherWn.id] = otherWn.links[wn.id];
+
+              // otherwise create a new one
+              } else {
+                wn.links[otherWn.id] = {
+                  source: wn,
+                  target: otherWn,
+                  numSharedMottos: 0,
+                  sharedMottos: [],
+                };
+                wordNodesLinks.push(wn.links[otherWn.id]);
+              }
             }
 
-            wn.relatedWordNodes[otherWn.id].numSharedMottos++;
-            wn.relatedWordNodes[otherWn.id].sharedMottos.push(m);
+            wn.links[otherWn.id].numSharedMottos++;
+            wn.links[otherWn.id].sharedMottos.push(m);
           });
         });
       });
 
       var wordNodes = {
         indexByWord: wordNodesIndex,
-        list: []
+        list: [],
+        links: wordNodesLinks
       };
 
       // unpack index to list
