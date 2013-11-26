@@ -100,6 +100,8 @@ define(
           mottosWordNodes.push(wordNodesIndex[w]);
         });
 
+        m.wordNodes = mottosWordNodes;
+
         // Link each wordNode to its related word nodes (other words used in the same motto),
         // incrementing the counters appropriately
         mottosWordNodes.forEach(function(wn, i) {
@@ -161,7 +163,7 @@ define(
           return 1 * ((a.id > b.id) ? 1 : -1);
       });
 
-      promiseWordNodes.resolve(wordNodes);
+      promiseWordNodes.resolve(wordNodes, mottos);
     })
     .fail(function(error) {
       var e = new Error("error getting promised mottos");
