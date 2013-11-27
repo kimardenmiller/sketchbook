@@ -1,3 +1,14 @@
+/**
+ * @module {meditations.ForceView} Force view of word nodes used in mottos
+ *
+ * Requires:
+ *   options.wordNodes {Object} Object with .links and .list attributes for the word nodes and their links
+ *
+ * Events:
+ *
+ *   hoverNode (this, {Object} selectedWordNode)
+ *     Emitted when we hover over a word node
+ */
 define(["jquery", "d3", "lodash", "backbone"],
 function($, d3, _, Backbone) {
 
@@ -6,12 +17,14 @@ var DEFAULT_W = 600,
 
     NODE_FORCE_VIEW_I = 0;
 
+var WORD_NODE_JOIN = function(d) { return d.id; };
+
 
 return Backbone.View.extend({
 
   events: {
-    "mouseover circle": "_highlightMotto",
-    "mouseout circle": "_unhighlightMotto"
+    "mouseover circle": "_onHoverNode",
+    "mouseout circle": "_onHoverOutNode"
     // "mouseout circle": "_unhighlightNode",
     // "change .nfv-radius-measures": "_handleSelectRadius",
     // "change .nfv-color-measures":  "_handleSelectColor"
@@ -90,31 +103,51 @@ return Backbone.View.extend({
     .attr("cy", function(d) { return d.y; });
   },
 
-  _highlightMotto: function(e) {
-    wordNode = d3.select(e.target).datum();
-    console.log("\n\n-----------------");
-    wordNode.mottos.forEach(function(m, i) {
-      console.log((i === 0 ? "> " : "") + m.motto + "   (" + m.university + ")");
-    });
-    console.log("   - \"" + wordNode.id + "\" (" + wordNode.count + ")");
+  /**
+   * Call to force a highlight of a specific motto's word nodes
+   * @param {Object} motto object linked with the word nodes
+   */
+  selectMotto: function(motto) {
+    if (this._highlightedMottoNodes) {
+      this.deselectNodes();
+    }
 
-    // highlight nodes of the first motto
-    this._highlightedMottoNodes = wordNode.mottos[0].wordNodes;
+    this._highlightedMottoNodes = motto.wordNodes;
+
     this.svgNodeG.selectAll("circle.node")
-      .data(this._highlightedMottoNodes, function(d){ return d.id; })
+      .data(motto.wordNodes, WORD_NODE_JOIN)
     .interrupt()
     .transition()
       .duration(200)
     .style("fill", "red");
   },
 
-  _unhighlightMotto: function() {
-    this.svgNodeG.selectAll("circle.node")
-      .data(this._highlightedMottoNodes, function(d) { return d.id; })
-    .interrupt()
-    .transition()
-      .duration(200)
-    .style("fill", "steelblue");
+  deselectNodes: function(specificNodes) {
+    if (specificNodes)
+      throw new Error("Not implemented TODO");
+
+    if (this._highlightedMottoNodes) {
+      this.svgNodeG.selectAll("circle.node")
+        .data(this._highlightedMottoNodes, WORD_NODE_JOIN)
+      .interrupt()
+      .transition()
+        .duration(200)
+      .style("fill", "steelblue");
+
+      delete this._highlightedMottoNodes;
+    }
+  },
+
+  _onHoverNode: function(e) {
+    wordNode = d3.select(e.target).datum();
+
+    console.log("fv: firing selectedNode");
+
+    this.trigger("hoverNode", this, wordNode);
+  },
+
+  _onHoverOutNode: function() {
+    this.deselectNodes();
   },
 
   /**

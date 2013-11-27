@@ -7,7 +7,8 @@
 
   <title>Collegiate Meditations</title>
 
-  <link rel="stylesheet" href="/lib/bootstrap-core/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/lib-user/bootstrap_232/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/lib-user/font-awesome/css/font-awesome.min.css">
 
   <style type="text/css">
 
@@ -37,7 +38,7 @@ line.link {
 
 
 body {
-  font: 10px sans-serif;
+
 }
 
 .bar rect {
@@ -80,8 +81,13 @@ body {
   <script data-main="main"
     src="/lib/require.js"></script>
 
-  <div class="row-fluid">
-    <div id="force_view"
+  <div class="row-fluid" style="padding: 20px;">
+    <div id="force_view" class="pull-left span4"></div>
+    <div id="motto_view" class="pull-left span4">
+      <div id="motto_render"></div>
+      <div id="motto_school"></div>
+      <div id="num_mottos" style="font-size:8px; color: grey;"></div>
+    </div>
   </div>
 
 
