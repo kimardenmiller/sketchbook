@@ -20,7 +20,8 @@ var DEFAULT_W = 600,
 
     NODE_FORCE_VIEW_I = 0;
 
-var WORD_NODE_JOIN = function(d) { return d.id; };
+var WORD_NODE_JOIN = function(d) { return d.id; },
+    LINK_JOIN = function(l) { return l.id; };
 
 
 return Backbone.View.extend({
@@ -126,10 +127,43 @@ return Backbone.View.extend({
     .style("fill", "red");
   },
 
-  deselectNodes: function(specificNodes) {
-    if (specificNodes)
-      throw new Error("Not implemented TODO");
+  /**
+   * Call to force a highlight of the links between all the word nodes in a specific motto
+   * @param {Object} motto object linked with the word nodes
+   * @param {number} durationMs
+   */
+  selectMottoLinks: function(motto, durationMs) {
 
+    if (!durationMs || durationMs < 0) durationMs = 200;
+
+    // Create selectedLinks, a list of each unique link between wordNodes used in this motto
+    var selectedLinks = [],
+        selectedLinksIdx = {},
+        wordNodeIdx = {};
+    motto.wordNodes.forEach(function(wn) { wordNodeIdx[wn.id] = true; }); // first, index all wn's used in this motto
+    motto.wordNodes.forEach(function(wordNode) {
+      for (var k in wordNode.links) {
+        if (!selectedLinksIdx[ wordNode.links[k].id ] && // we haven't grabbed this link yet, AND
+            wordNodeIdx[ wordNode.links[k].source.id] && // BOTH the source and target are word nodes in this motto
+            wordNodeIdx[ wordNode.links[k].target.id] ) {
+
+          selectedLinksIdx[ wordNode.links[k].id ] = true;
+          selectedLinks.push( wordNode.links[k] );
+        }
+      }
+    });
+
+    this._highlightedMottoLinks = selectedLinks;
+
+    this.svgLinkG.selectAll("line.link")
+    .data(selectedLinks, LINK_JOIN)
+    .interrupt()
+    .transition()
+      .duration(durationMs)
+    .style("stroke", "red");
+  },
+
+  deselectNodes: function() {
     if (this._highlightedMottoNodes) {
       this.svgNodeG.selectAll("circle.node")
         .data(this._highlightedMottoNodes, WORD_NODE_JOIN)
@@ -139,6 +173,17 @@ return Backbone.View.extend({
       .style("fill", "steelblue");
 
       delete this._highlightedMottoNodes;
+    }
+
+    if (this._highlightedMottoLinks) {
+
+      this.svgLinkG.selectAll("line.link")
+      .data(this._highlightedMottoLinks, LINK_JOIN)
+      .interrupt()
+        .transition(200)
+      .style("stroke", "#ddd");
+
+      delete this._highlightedMottoLinks;
     }
   },
 
@@ -166,7 +211,7 @@ return Backbone.View.extend({
       return;
 
     this._linkSel = this.svgLinkG.selectAll("line.link")
-      .data(this._links)
+      .data(this._links, LINK_JOIN)
     .enter().append("line")
       .attr("class", "link")
       .attr("x1", function(d) { return d.source.x; })

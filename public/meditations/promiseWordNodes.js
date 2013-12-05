@@ -127,6 +127,7 @@ define(
               // otherwise create a new one
               } else {
                 wn.links[otherWn.id] = {
+                  id: wn.id + "__" + otherWn.id,
                   source: wn,
                   target: otherWn,
                   numSharedMottos: 0,

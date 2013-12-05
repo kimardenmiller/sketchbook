@@ -20,9 +20,12 @@ return Backbone.View.extend({
   },
 
   _pickNextMotto: function(forceView, wordNode) {
+    var lastNextMs = new Date() - this._lastNext;
+    this._lastNext = new Date();
+
     this._curMottoI = (this._curMottoI + 1) % wordNode.mottos.length;
     this._showMotto(wordNode, {
-      meditateWordMs: 800
+      meditateWordMs: Math.min(lastNextMs, 800)
     });
   },
 
@@ -101,6 +104,16 @@ return Backbone.View.extend({
       .duration(1000)
       .style("opacity", 1);
     });
+
+    // And highlight the links when the rest of the phrase comes in
+    if (this._queuedHighlightLinks !== undefined) {
+      clearTimeout(this._queuedHighlightLinks);
+      delete this._queuedHighlightLinks;
+    }
+    this._queuedHighlightLinks = setTimeout(function() {
+      this.options.forceView.selectMottoLinks(motto, 1000);
+      delete this._queuedHighlightLinks;
+    }.bind(this), opts.meditateWordMs);
 
   }
 });
