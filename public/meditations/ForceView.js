@@ -8,6 +8,9 @@
  *
  *   hoverNode (this, {Object} selectedWordNode)
  *     Emitted when we hover over a word node
+ *
+ *   clickNode (this, {Object} selectedWordNode)
+ *     Emitted when we click a word node
  */
 define(["jquery", "d3", "lodash", "backbone"],
 function($, d3, _, Backbone) {
@@ -24,7 +27,8 @@ return Backbone.View.extend({
 
   events: {
     "mouseover circle": "_onHoverNode",
-    "mouseout circle": "_onHoverOutNode"
+    "mouseout circle": "_onHoverOutNode",
+    "click circle": "_onClickNode"
     // "mouseout circle": "_unhighlightNode",
     // "change .nfv-radius-measures": "_handleSelectRadius",
     // "change .nfv-color-measures":  "_handleSelectColor"
@@ -144,6 +148,10 @@ return Backbone.View.extend({
     console.log("fv: firing selectedNode");
 
     this.trigger("hoverNode", this, wordNode);
+  },
+
+  _onClickNode: function(e) {
+    this.trigger("clickNode", this, d3.select(e.target).datum());
   },
 
   _onHoverOutNode: function() {

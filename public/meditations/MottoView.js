@@ -16,10 +16,37 @@ return Backbone.View.extend({
       throw new Error("ForceView instance required!");
 
     this.listenTo(this.options.forceView, "hoverNode", this._pickAndShowMotto);
+    this.listenTo(this.options.forceView, "clickNode", this._pickNextMotto);
+  },
+
+  _pickNextMotto: function(forceView, wordNode) {
+    this._curMottoI = (this._curMottoI + 1) % wordNode.mottos.length;
+    this._showMotto(wordNode, {
+      meditateWordMs: 800
+    });
   },
 
   _pickAndShowMotto: function(forceView, wordNode) {
-    var motto = wordNode.mottos[Math.floor(Math.random() * wordNode.mottos.length)];
+    if (this._curWordNode === wordNode)
+      return this._pickNextMotto(forceView, wordNode);
+
+    this._curWordNode = wordNode;
+    this._curMottoI = Math.floor(Math.random() * wordNode.mottos.length);
+    this._showMotto(wordNode);
+  },
+
+  _showMotto: function(wordNode, opts) {
+    opts = opts || {};
+
+    // Default Options:
+    opts = _.extend({
+
+      /* How long to highlight the selected word before fading in the rest of the motto */
+      meditateWordMs: 3000
+
+    }, opts);
+
+    var motto = this._curMotto = wordNode.mottos[this._curMottoI];
 
     forceView.selectMotto(motto);
 
@@ -40,13 +67,14 @@ return Backbone.View.extend({
     });
     console.log("   - \"" + wordNode.id + "\" (" + wordNode.count + ")");
 
-    d3.select("#motto_render").selectAll("span").remove();
+    // Draw the selector dots
     $("#num_mottos").html( wordNode.mottos.reduce(
       function(html, m) {
         return html + "<i class='fa fa-" + (m === motto ? "circle" : "circle-o") + "'></i> ";
       }, ''
     ));
 
+    d3.select("#motto_render").selectAll("span").remove();
     var mottoSpans = d3.select("#motto_render").selectAll("span")
       .data(mottoChunks)
     .enter().append("span")
@@ -56,7 +84,7 @@ return Backbone.View.extend({
       .text(function(d) {return d.raw + " "; });
 
     // do nothing, just reflect on the word for 5 seconds
-    mottoSpans.transition().duration(3000)
+    mottoSpans.transition().duration(opts.meditateWordMs)
     .each("end", function() {
       d3.select(this).transition()
       .duration(1000)
@@ -67,7 +95,7 @@ return Backbone.View.extend({
     .interrupt()
       .text(" - " + motto.university)
       .style("opacity", 0)
-    .transition().duration(3000)
+    .transition().duration(opts.meditateWordMs)
     .each("end", function() {
       d3.select(this).transition()
       .duration(1000)
