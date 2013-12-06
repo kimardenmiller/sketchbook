@@ -6,10 +6,10 @@
  *
  * Events:
  *
- *   hoverNode (this, {Object} selectedWordNode)
+ *   hoverNode (this, {Object} selectedWordNode, {jqEvent})
  *     Emitted when we hover over a word node
  *
- *   clickNode (this, {Object} selectedWordNode)
+ *   clickNode (this, {Object} selectedWordNode, {jqEvent})
  *     Emitted when we click a word node
  */
 define(["jquery", "d3", "lodash", "backbone"],
@@ -192,11 +192,11 @@ return Backbone.View.extend({
 
     console.log("fv: firing selectedNode");
 
-    this.trigger("hoverNode", this, wordNode);
+    this.trigger("hoverNode", this, wordNode, e);
   },
 
   _onClickNode: function(e) {
-    this.trigger("clickNode", this, d3.select(e.target).datum());
+    this.trigger("clickNode", this, d3.select(e.target).datum(), e);
   },
 
   _onHoverOutNode: function() {

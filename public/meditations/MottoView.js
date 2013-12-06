@@ -17,25 +17,28 @@ return Backbone.View.extend({
 
     this.listenTo(this.options.forceView, "hoverNode", this._pickAndShowMotto);
     this.listenTo(this.options.forceView, "clickNode", this._pickNextMotto);
+
+    this._initialOffset = this.$el.offset();
   },
 
-  _pickNextMotto: function(forceView, wordNode) {
+  _pickNextMotto: function(forceView, wordNode, nodeEvent) {
     var lastNextMs = new Date() - this._lastNext;
     this._lastNext = new Date();
 
     this._curMottoI = (this._curMottoI + 1) % wordNode.mottos.length;
     this._showMotto(wordNode, {
-      meditateWordMs: Math.min(lastNextMs, 800)
+      meditateWordMs: Math.min(lastNextMs, 800),
+      targetEl: nodeEvent.target
     });
   },
 
-  _pickAndShowMotto: function(forceView, wordNode) {
+  _pickAndShowMotto: function(forceView, wordNode, nodeEvent) {
     if (this._curWordNode === wordNode)
-      return this._pickNextMotto(forceView, wordNode);
+      return this._pickNextMotto(forceView, wordNode, nodeEvent);
 
     this._curWordNode = wordNode;
     this._curMottoI = Math.floor(Math.random() * wordNode.mottos.length);
-    this._showMotto(wordNode);
+    this._showMotto(wordNode, {targetEl: nodeEvent.target});
   },
 
   _showMotto: function(wordNode, opts) {
@@ -114,6 +117,13 @@ return Backbone.View.extend({
       this.options.forceView.selectMottoLinks(motto, 1000);
       delete this._queuedHighlightLinks;
     }.bind(this), opts.meditateWordMs);
+
+    // Adjust the height to match the position of the target el
+    if (opts.targetEl) {
+      this.$el.animate({
+        marginTop: $(opts.targetEl).offset().top - this._initialOffset.top
+      }, 200);
+    }
 
   }
 });
