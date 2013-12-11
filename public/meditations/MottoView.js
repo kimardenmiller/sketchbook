@@ -17,7 +17,7 @@ return Backbone.View.extend({
     if (!options.wordListView) throw new Error("WordListView instance required!");
 
     this.listenTo(this.options.wordListView, "selectedWordNode", this._pickAndShowMotto);
-    this.listenTo(this.options.forceView, "hoverNode", this._pickAndShowMotto);
+    this.listenTo(this.options.forceView, "hoverNode", this._handleHoverNode);
     this.listenTo(this.options.forceView, "clickNode", this._pickNextMotto);
 
     this.listenTo(this.options.forceView, "tick", this._forceLayoutTick.bind(this));
@@ -30,7 +30,7 @@ return Backbone.View.extend({
     this._lastNext = new Date();
 
     this._curMottoI = (this._curMottoI + 1) % wordNode.mottos.length;
-    this._showMotto(wordNode, {
+    this._showMotto(wordNode.mottos[this._curMottoI], wordNode, {
       meditateWordMs: Math.min(lastNextMs, 800)
     });
   },
@@ -41,10 +41,22 @@ return Backbone.View.extend({
 
     this._curWordNode = wordNode;
     this._curMottoI = Math.floor(Math.random() * wordNode.mottos.length);
-    this._showMotto(wordNode);
+    this._showMotto(wordNode.mottos[this._curMottoI], wordNode);
   },
 
-  _showMotto: function(wordNode, opts) {
+  _handleHoverNode: function(forceView, wordNode) {
+    if (this._debounceHoverNode === wordNode)
+      return;
+
+    this._debounceHoverNode = wordNode;
+
+    this._showMotto(wordNode.lastMottoShown, wordNode, {
+      //meditateWordMs: 500,
+      dontReleaseMeditate: true
+    });
+  },
+
+  _showMotto: function(motto, wordNode, opts) {
     opts = opts || {};
 
     // Default Options:
@@ -55,10 +67,13 @@ return Backbone.View.extend({
 
     }, opts);
 
-    var motto = this._curMotto = wordNode.mottos[this._curMottoI],
+    // So we can see the motto again on hover
+    motto.wordNodes.forEach(function(wn) {
+      wn.lastMottoShown = motto;
+    });
 
-        // Add all the nodes for this motto and get a handle their puppet strings
-        fvControlBoard = this.options.forceView.addMotto(motto, wordNode);
+    // Add all the nodes for this motto and get a handle their puppet strings
+    var fvControlBoard = this.options.forceView.addMotto(motto, wordNode);
 
 
     var mottoChunks = motto.motto
@@ -119,17 +134,15 @@ return Backbone.View.extend({
     });
 
     // And highlight the links when the rest of the phrase comes in
-    if (this._queuedHighlightLinks !== undefined) {
-      clearTimeout(this._queuedHighlightLinks);
-      delete this._queuedHighlightLinks;
-    }
-    this._queuedHighlightLinks = setTimeout(function() {
+    this._makeInterruptableTimer('_queuedFocusOtherNodes', function() {
       fvControlBoard.focusAllMottoNodes().releaseNewNodes();
       delete this._queuedHighlightLinks;
-    }.bind(this), opts.meditateWordMs);
+    }, opts.meditateWordMs);
 
-    setTimeout(function() {
-      fvControlBoard.releaseMeditateOn();
+    this._makeInterruptableTimer('_queuedSemiFocus', function() {
+      if (!opts.dontReleaseMeditate) {
+        fvControlBoard.releaseMeditateOn();
+      }
       fvControlBoard.semiFocusAll(1000);
       mottoSpans.transition().duration(1000).style('color', 'DarkSlateBlue');
       d3.select("#motto_school").transition().duration(1000).style('color', 'DarkSlateBlue');
@@ -142,6 +155,14 @@ return Backbone.View.extend({
     }, 200);
     //this._alignWithEl = fvControlBoard.meditateOnEl;
 
+  },
+
+  _makeInterruptableTimer: function(attrName, action, timeMs) {
+    if (this[attrName] !== undefined) {
+      clearTimeout(this[attrName]);
+      delete this[attrName];
+    }
+    this[attrName] = setTimeout(action.bind(this), timeMs);
   },
 
   _forceLayoutTick: function() {

@@ -69,6 +69,10 @@ var WORD_NODE_JOIN = function(d) { return d.id; },
 
 return Backbone.View.extend({
 
+  events: {
+    "mouseover circle": "_onHoverNode",
+  },
+
   initialize: function(opts) {
 
     this.id = "_nfv" + NODE_FORCE_VIEW_I++;
@@ -115,6 +119,10 @@ return Backbone.View.extend({
 
 
     this.render();
+  },
+
+  _onHoverNode: function(e) {
+    this.trigger('hoverNode', this, d3.select(e.target).datum());
   },
 
   /**
