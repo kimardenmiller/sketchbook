@@ -66,6 +66,9 @@ body {
   padding-left: 15px;
 }
 
+#word_list_view li > span {
+  cursor: pointer;
+}
   </style>
 
 </head>
@@ -74,13 +77,22 @@ body {
   <!-- Load sketch: load JamJS's requireJs, but reference the experiment's main.js to start your sketch -->
   <script data-main="main"
     src="/lib/require.js"></script>
+  <div class="container">
+    <div class="row-fluid" style="padding: 20px;">
+      <div id="force_view" class="pull-left span4"></div>
+      <div id="motto_view" class="pull-left span4">
+        <div id="motto_render"></div>
+        <div id="motto_school"></div>
+        <div id="num_mottos" style="font-size:8px; color: grey;"></div>
+      </div>
 
-  <div class="row-fluid" style="padding: 20px;">
-    <div id="force_view" class="pull-left span4"></div>
-    <div id="motto_view" class="pull-left span4">
-      <div id="motto_render"></div>
-      <div id="motto_school"></div>
-      <div id="num_mottos" style="font-size:8px; color: grey;"></div>
+      <div id="word_list_view" class="pull-left span4">
+        Search: <input type='text' class='search'></input>
+        <div style="height: 300px; overflow: auto;">
+          <ul>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
 

@@ -11,9 +11,10 @@ require(
    "lodash",
    "meditations/promiseWordNodes",
    "meditations/BloomingForceView",
-   "meditations/MottoView"
+   "meditations/MottoView",
+   "meditations/WordListView"
    ],
-  function($, _, promiseWordNodes, BloomingForceView, MottoView) {
+  function($, _, promiseWordNodes, BloomingForceView, MottoView, WordListView) {
 
     promiseWordNodes
     .done(function(wordNodes, mottos) {
@@ -22,9 +23,16 @@ require(
         el: "#force_view",
         wordNodes: wordNodes
       });
+
+      window.wordListView = new WordListView({
+        el: "#word_list_view",
+        wordNodes: wordNodes.list
+      });
+
       window.mottoView = new MottoView({
         el: "#motto_view",
-        forceView: forceView
+        forceView: forceView,
+        wordListView: wordListView
       });
       window.mottos = mottos;
       window.wordNodes = wordNodes;
@@ -33,6 +41,8 @@ require(
       console.log("then: c.focusMeditateOn()");
       console.log("then: c.focusAllMottoNodes().releaseNewNodes()");
       console.log("then: c = forceView.addMotto(mottos[5], mottos[5].wordNodes[0])");
+
+
 
       forceView.on("highlightedMotto", function(fv, motto, wordNode) {
         console.log("Highlighted a motto!", motto, wordNode);

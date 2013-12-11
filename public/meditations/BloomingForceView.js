@@ -236,6 +236,8 @@ return Backbone.View.extend({
     this._lastNewMottoController = new function() {
       this.start = self.force.start;
 
+      this.meditateOnEl = meditateOnNodeSel[0][0];
+
       this.focusMeditateOn = function(duration) {
         meditateOnNodeSel.transition().duration(duration || 800).style('fill', COLOR_FOCUSED_NODE);
         return this;

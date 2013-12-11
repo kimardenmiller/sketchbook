@@ -3,6 +3,7 @@
  *
  * Requires:
  *   options.forceView {meditations.ForceView} ForceView instance so we can trigger motto highlights
+ *   options.wordListView {meditations.WordListView} WordList view so we know when a word node has been selected
  *
  * Events:
  */
@@ -12,33 +13,33 @@ function($, d3, _, Backbone) {
 
 return Backbone.View.extend({
   initialize: function(options) {
-    if (!options.forceView)
-      throw new Error("ForceView instance required!");
+    if (!options.forceView) throw new Error("ForceView instance required!");
+    if (!options.wordListView) throw new Error("WordListView instance required!");
 
+    this.listenTo(this.options.wordListView, "selectedWordNode", this._pickAndShowMotto);
     this.listenTo(this.options.forceView, "hoverNode", this._pickAndShowMotto);
     this.listenTo(this.options.forceView, "clickNode", this._pickNextMotto);
 
     this._initialOffset = this.$el.offset();
   },
 
-  _pickNextMotto: function(forceView, wordNode, nodeEvent) {
+  _pickNextMotto: function(view, wordNode) {
     var lastNextMs = new Date() - this._lastNext;
     this._lastNext = new Date();
 
     this._curMottoI = (this._curMottoI + 1) % wordNode.mottos.length;
     this._showMotto(wordNode, {
-      meditateWordMs: Math.min(lastNextMs, 800),
-      targetEl: nodeEvent.target
+      meditateWordMs: Math.min(lastNextMs, 800)
     });
   },
 
-  _pickAndShowMotto: function(forceView, wordNode, nodeEvent) {
+  _pickAndShowMotto: function(view, wordNode) {
     if (this._curWordNode === wordNode)
-      return this._pickNextMotto(forceView, wordNode, nodeEvent);
+      return this._pickNextMotto(view, wordNode);
 
     this._curWordNode = wordNode;
     this._curMottoI = Math.floor(Math.random() * wordNode.mottos.length);
-    this._showMotto(wordNode, {targetEl: nodeEvent.target});
+    this._showMotto(wordNode);
   },
 
   _showMotto: function(wordNode, opts) {
@@ -52,9 +53,10 @@ return Backbone.View.extend({
 
     }, opts);
 
-    var motto = this._curMotto = wordNode.mottos[this._curMottoI];
+    var motto = this._curMotto = wordNode.mottos[this._curMottoI],
 
-    forceView.selectMotto(motto);
+        // Add all the nodes for this motto and get a handle their puppet strings
+        fvControlBoard = this.options.forceView.addMotto(motto, wordNode);
 
 
     var mottoChunks = motto.motto
@@ -90,13 +92,18 @@ return Backbone.View.extend({
       .text(function(d) {return d.raw + " "; });
 
     // do nothing, just reflect on the word for 5 seconds
+    fvControlBoard.focusMeditateOn();
     mottoSpans.transition().duration(opts.meditateWordMs)
+
+    // Then bring in the rest of the phrase
     .each("end", function() {
       d3.select(this).transition()
       .duration(1000)
       .style("opacity", 1)
       .style("color", "black");
     });
+
+    // Bring in the school after the same delay
     d3.select("#motto_school")
     .interrupt()
       .text(" - " + motto.university)
@@ -114,16 +121,22 @@ return Backbone.View.extend({
       delete this._queuedHighlightLinks;
     }
     this._queuedHighlightLinks = setTimeout(function() {
-      this.options.forceView.selectMottoLinks(motto, 1000);
+      fvControlBoard.focusAllMottoNodes().releaseNewNodes();
       delete this._queuedHighlightLinks;
     }.bind(this), opts.meditateWordMs);
 
+    setTimeout(function() {
+      fvControlBoard.releaseMeditateOn();
+    }, opts.meditateWordMs * 2);
+
+    setTimeout(function() {
+      fvControlBoard.unfocusAll();
+    }, opts.meditateWordMs * 3);
+
     // Adjust the height to match the position of the target el
-    if (opts.targetEl) {
-      this.$el.animate({
-        marginTop: $(opts.targetEl).offset().top - this._initialOffset.top
-      }, 200);
-    }
+    this.$el.animate({
+      marginTop: $(fvControlBoard.meditateOnEl).offset().top - this._initialOffset.top
+    }, 200);
 
   }
 });
