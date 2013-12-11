@@ -20,6 +20,8 @@ return Backbone.View.extend({
     this.listenTo(this.options.forceView, "hoverNode", this._pickAndShowMotto);
     this.listenTo(this.options.forceView, "clickNode", this._pickNextMotto);
 
+    this.listenTo(this.options.forceView, "tick", this._forceLayoutTick.bind(this));
+
     this._initialOffset = this.$el.offset();
   },
 
@@ -100,7 +102,7 @@ return Backbone.View.extend({
       d3.select(this).transition()
       .duration(1000)
       .style("opacity", 1)
-      .style("color", "black");
+      .style("color", "red");
     });
 
     // Bring in the school after the same delay
@@ -108,6 +110,7 @@ return Backbone.View.extend({
     .interrupt()
       .text(" - " + motto.university)
       .style("opacity", 0)
+      .style('color', 'red')
     .transition().duration(opts.meditateWordMs)
     .each("end", function() {
       d3.select(this).transition()
@@ -127,17 +130,26 @@ return Backbone.View.extend({
 
     setTimeout(function() {
       fvControlBoard.releaseMeditateOn();
+      fvControlBoard.semiFocusAll(1000);
+      mottoSpans.transition().duration(1000).style('color', 'DarkSlateBlue');
+      d3.select("#motto_school").transition().duration(1000).style('color', 'DarkSlateBlue');
     }, opts.meditateWordMs * 2);
 
-    setTimeout(function() {
-      fvControlBoard.unfocusAll();
-    }, opts.meditateWordMs * 3);
 
     // Adjust the height to match the position of the target el
     this.$el.animate({
       marginTop: $(fvControlBoard.meditateOnEl).offset().top - this._initialOffset.top
     }, 200);
+    //this._alignWithEl = fvControlBoard.meditateOnEl;
 
+  },
+
+  _forceLayoutTick: function() {
+    if (this._alignWithEl) {
+      this.$el.css({
+        marginTop: $(this._alignWithEl).offset().top - this._initialOffset.top
+      });
+    }
   }
 });
 

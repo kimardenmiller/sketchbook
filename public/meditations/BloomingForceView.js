@@ -5,6 +5,7 @@
  *   nothing
  *
  * Events:
+ *   tick (this, {d3.layout.force} forceView): Emitted when the force view ticks
  *
  *   hoverNode (this, {Object} selectedWordNode, {jqEvent})
  *     Emitted when we hover over a word node
@@ -266,6 +267,12 @@ return Backbone.View.extend({
         return this;
       };
 
+      this.semiFocusAll = function(duration) {
+        allMottoNodesSel.transition().duration(duration || 800).style('fill', 'DarkSlateBlue');
+        allLinksSel.transition().duration(duration || 800).style('stroke', 'DarkSlateBlue');
+        return this;
+      };
+
       this.unfocusAll = function(duration) {
         allMottoNodesSel.transition().duration(duration || 800).style('fill', COLOR_NODE);
         allLinksSel.transition().duration(duration || 800).style('stroke', STYLE_LINK_STROKE);
@@ -289,6 +296,9 @@ return Backbone.View.extend({
     this._nodeSel
     .attr("cx", function(d) { return d.x; })
     .attr("cy", function(d) { return d.y; });
+
+    // D3 allows only a single event listener... let anyone hear the tick-tock of my clock
+    this.trigger('tick', this, this.force);
   },
 
   render: function() {
