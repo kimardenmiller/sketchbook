@@ -10,15 +10,15 @@ require(
   ["jquery",
    "lodash",
    "meditations/promiseWordNodes",
-   "meditations/ForceView",
+   "meditations/BloomingForceView",
    "meditations/MottoView"
    ],
-  function($, _, promiseWordNodes, ForceView, MottoView) {
+  function($, _, promiseWordNodes, BloomingForceView, MottoView) {
 
     promiseWordNodes
     .done(function(wordNodes, mottos) {
 
-      window.forceView = new ForceView({
+      window.forceView = new BloomingForceView({
         el: "#force_view",
         wordNodes: wordNodes
       });
@@ -28,6 +28,11 @@ require(
       });
       window.mottos = mottos;
       window.wordNodes = wordNodes;
+
+      console.log("Force view ready.  Try: c = forceView.addMotto(mottos[4], mottos[4].wordNodes[0])");
+      console.log("then: c.focusMeditateOn()");
+      console.log("then: c.focusAllMottoNodes().releaseNewNodes()");
+      console.log("then: c = forceView.addMotto(mottos[5], mottos[5].wordNodes[0])");
 
       forceView.on("highlightedMotto", function(fv, motto, wordNode) {
         console.log("Highlighted a motto!", motto, wordNode);

@@ -10,7 +10,6 @@
     "dependencies": {
       "jasmine": null,
       "jquery": "1.9.1",
-      "lodash": "1.0.1",
       "backbone": "0.9.10"
     }
   }
