@@ -18,11 +18,38 @@ function($, d3, _, Backbone) {
 var DEFAULT_W = 600,
     DEFAULT_H = 500,
 
-    NODE_FORCE_VIEW_I = 0;
+    NODE_FORCE_VIEW_I = 0,
+
+    FADE_LINKS_MS = 500;
 
 var WORD_NODE_JOIN = function(d) { return d.id; },
-    LINK_JOIN = function(l) { return l.id; };
 
+    LINK_JOIN = function(l) { return l.id; },
+
+    COLOR_NODE = function(d) {
+      return d.mottos.length === 1 ? "lightgrey" : "steelblue";
+    },
+
+    STYLE_LINK = function(d) {
+      var style;
+      if (d.source.mottos.length === 1 || d.target.mottos.length === 1) {
+        style = {
+          stroke: '#eee',
+          strokeWidth: '0.5px'
+        };
+
+      } else {
+        style = {
+          stroke: 'steelblue',
+          strokeWidth: '1.5px'
+        };
+      }
+
+      d3.select(this)
+      .transition() // inherit transition timings from the .each() call
+      .style(style);
+
+    };
 
 return Backbone.View.extend({
 
@@ -170,7 +197,7 @@ return Backbone.View.extend({
       .interrupt()
       .transition()
         .duration(200)
-      .style("fill", "steelblue");
+      .style("fill", COLOR_NODE);
 
       delete this._highlightedMottoNodes;
     }
@@ -180,8 +207,9 @@ return Backbone.View.extend({
       this.svgLinkG.selectAll("line.link")
       .data(this._highlightedMottoLinks, LINK_JOIN)
       .interrupt()
-        .transition(200)
-      .style("stroke", "#ddd");
+      .transition()
+        .duration(200)
+      .each(STYLE_LINK);
 
       delete this._highlightedMottoLinks;
     }
@@ -213,21 +241,20 @@ return Backbone.View.extend({
     this._linkSel = this.svgLinkG.selectAll("line.link")
       .data(this._links, LINK_JOIN)
     .enter().append("line")
-      .attr("class", "link")
+      .attr("class", 'link')
       .attr("x1", function(d) { return d.source.x; })
       .attr("y1", function(d) { return d.source.y; })
       .attr("x2", function(d) { return d.target.x; })
       .attr("y2", function(d) { return d.target.y; })
-      .style("opacity", 0);
+      .style("stroke", "#fff");
     this._linkSel
     .transition()
       .duration(1000)
-      .style("opacity", 1);
+    .each(STYLE_LINK);
   },
 
   render: function() {
-    var self = this,
-        FADE_LINKS_MS = 500;
+    var self = this;
 
     if (this._linkSel) {
       var killLinkSel = function() {
@@ -247,7 +274,7 @@ return Backbone.View.extend({
     this._nodeSel.enter().append("circle")
       .attr("class", "node")
       .attr("r", function(d) { return self.nodeSizeScale(d.count); })
-      .style("fill", "steelblue")
+      .style("fill", COLOR_NODE)
       .call(this.force.drag);
 
     if (this._linkSel) {
