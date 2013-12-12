@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <title>Meditations</title>
+
+  <link rel="stylesheet" href="/lib-user/bootstrap_232/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/lib-user/font-awesome/css/font-awesome.min.css">
+
+  <style type="text/css">
+
+circle.node {
+  stroke-width: 1.5px;
+}
+
+
+circle.node.highlight,
+circle.node.highlight.semihighlight { /* highlight "takes priority" over semihighlight */
+  stroke: red;
+  stroke-width: 1.5px;
+}
+
+circle.node.semihighlight {
+  stroke: red;
+  stroke-width: 1px;
+  stroke-opacity: .75;
+}
+
+svg > g.nodes > circle {
+  cursor: pointer;
+}
+
+svg > g.nodes.locked > circle {
+  cursor: default;
+}
+
+#word_list_view li {
+  margin-top: 3px;
+}
+
+#word_list_view li > div.word-text {
+  cursor: pointer;
+}
+
+#word_list_view li > div.shown-nodes {
+  margin-top: -7px;
+  font-size: 8px;
+}
+
+#num_mottos i.focus {
+  color: red;
+}
+  </style>
+
+</head>
+
+<body style="background-color: #2E1139">
+  <!-- Load sketch: load JamJS's requireJs, but reference the experiment's main.js to start your sketch -->
+  <script data-main="main"
+    src="/lib/require.js"></script>
+  <div class="container" style="display:none;">
+    <div class="row-fluid" style="padding: 20px;">
+      <div id="force_view" class="pull-left span4" style="height: 500px;"></div>
+      <div id="motto_view" class="pull-left span4" style="height: 500px;">
+        <div id="motto_render"></div>
+        <div id="motto_school"></div>
+        <div id="num_mottos" style="font-size:8px; color: grey;"></div>
+      </div>
+
+      <div id="word_list_view" class="pull-left span4">
+        Search: <input type='text' class='search'></input>
+        <div style="height: 300px; overflow: auto;">
+          <ul>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id='footer' class="navbar navbar-fixed-bottom hide">
+    <span class='title'>meditations</span>
+    <span class='byline'>by dan lopuch | @floatrock | dlopuch.github.io/sketchbook/meditations</span>
+  </div>
+
+
+
+
+
+
+</body>
+</html>
+
