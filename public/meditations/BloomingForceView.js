@@ -163,11 +163,6 @@ return Backbone.View.extend({
         this._nodes.push(wn);
         newNodes.push(wn);
       }
-
-      if (!wn.displayedMottosIdx) {
-        wn.displayedMottosIdx = {};
-      }
-      wn.displayedMottosIdx[motto.id] = true;
     }, this);
 
     var mottoNodesIdx = _.indexBy(motto.wordNodes, 'id');

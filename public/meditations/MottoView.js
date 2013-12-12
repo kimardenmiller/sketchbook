@@ -18,42 +18,30 @@ return Backbone.View.extend({
 
     this.listenTo(this.options.wordListView, "selectedWordNode", this._pickAndShowMotto);
     this.listenTo(this.options.forceView, "hoverNode", this._handleHoverNode);
-    this.listenTo(this.options.forceView, "clickNode", this._pickNextMotto);
+    this.listenTo(this.options.forceView, "clickNode", this._pickAndShowMotto);
 
     this.listenTo(this.options.forceView, "tick", this._forceLayoutTick.bind(this));
 
     this._initialOffset = this.$el.offset();
   },
 
-  _pickNextMotto: function(view, wordNode) {
-    var lastNextMs = new Date() - this._lastNext;
-    this._lastNext = new Date();
+  _pickAndShowMotto: function(view, wordNode) {
 
-    var nextMotto, lastMottoI;
-    _.forEach(wordNode.mottos, function(m, i) {
-      if (!(m.id in wordNode.shownMottos)) {
-        nextMotto = m;
-      } else if (m === wordNode.lastMottoShown) {
-        lastMottoI = i;
+    var mottoI = ((wordNode.lastMottoI === undefined ? -1 : wordNode.lastMottoI) + 1) % wordNode.mottos.length;
+
+    // We may have shown a motto in the middle of the list by some other means... skip if we have unseen mottos left
+    if (wordNode.shownMottos && Object.keys(wordNode.shownMottos).length !== wordNode.mottos.length) {
+      var ttl = wordNode.mottos.length;
+      while (wordNode.mottos[mottoI].id in wordNode.shownMottos && ttl) {
+        mottoI = (mottoI + 1) % wordNode.mottos.length;
+        ttl--; // bug where if a word is used in a motto multiple times, shownMottos never gets to mottos.length... TODO
       }
-    });
-
-    if (!nextMotto) {
-      nextMotto = wordNode.mottos[ ((lastMottoI || 0) + 1) % wordNode.mottos.length ];
     }
 
-    this._showMotto(nextMotto, wordNode, {
-      //meditateWordMs: Math.min(lastNextMs, 800)
-    });
-  },
-
-  _pickAndShowMotto: function(view, wordNode) {
-    if (this._curWordNode === wordNode)
-      return this._pickNextMotto(view, wordNode);
+    wordNode.lastMottoI = mottoI;
 
     this._curWordNode = wordNode;
-    this._curMottoI = Math.floor(Math.random() * wordNode.mottos.length);
-    this._showMotto(wordNode.mottos[this._curMottoI], wordNode);
+    this._showMotto(wordNode.mottos[mottoI], wordNode);
   },
 
   _handleHoverNode: function(forceView, wordNode) {
@@ -118,11 +106,20 @@ return Backbone.View.extend({
     .each(function(aMotto) {
       // d3's classed sucks, revert to jquery
       $(this)
+      .css('color', 'grey')
       .addClass('fa')
-      .addClass('fa-' + ((aMotto.id in wordNode.displayedMottosIdx) ? 'circle' : 'circle-o'));
+      .addClass('fa-' + ((aMotto.id in wordNode.shownMottos) ? 'circle' : 'circle-o'));
 
       if (aMotto === motto)
-        $(this).addClass('focus');
+        d3.select(this)
+        .style('color', 'red')
+        .transition().duration(opts.meditateWordMs)
+        .each("end", function() {
+
+          d3.select(this).transition()
+          .duration(1000)
+          .style('color', 'grey');
+        });
     });
 
     d3.select("#motto_render").selectAll("span").remove();
