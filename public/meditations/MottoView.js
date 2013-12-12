@@ -42,7 +42,13 @@ return Backbone.View.extend({
     wordNode.lastMottoI = mottoI;
 
     this._curWordNode = wordNode;
-    this._showMotto(wordNode.mottos[mottoI], wordNode);
+
+    var opts = {};
+
+    if (wordNode.shownMottos && wordNode.mottos[mottoI].id in wordNode.shownMottos)
+      opts.meditateWordMs = 400; // we've seen it, quickly now.
+
+    this._showMotto(wordNode.mottos[mottoI], wordNode, opts);
   },
 
   _handleHoverNode: function(forceView, wordNode) {
@@ -168,8 +174,8 @@ return Backbone.View.extend({
           fvControlBoard.releaseMeditateOn();
         }
         fvControlBoard.unfocusAll(1000);
-        mottoSpans.transition().duration(1000).style('color', 'darkgrey');
-        d3.select("#motto_school").transition().duration(1000).style('color', 'darkgrey');
+        mottoSpans.transition().duration(1000).style('color', 'darkgrey').style('opacity', 1);
+        d3.select("#motto_school").transition().duration(1000).style('color', 'darkgrey').style('opacity', 1);
 
         delete this._debounceHoverNode;
       }, opts.meditateWordMs * 2);
