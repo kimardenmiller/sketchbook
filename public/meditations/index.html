@@ -13,7 +13,6 @@
   <style type="text/css">
 
 circle.node {
-  cursor: pointer;
   stroke-width: 1.5px;
 }
 
@@ -30,40 +29,12 @@ circle.node.semihighlight {
   stroke-opacity: .75;
 }
 
-
-body {
-
+svg > g.nodes > circle {
+  cursor: pointer;
 }
 
-.bar rect {
-  shape-rendering: crispEdges;
-}
-
-.bar text {
-  fill: #fff;
-  cursor:default;
-}
-
-.axis path, .axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
-}
-
-.comment-hover {
-  position: absolute;
-  top: -500px;
-  left: -500px;
-  z-index: 10;
-  background-color: #efefef;
-  width: 500px;
+svg > g.nodes.locked > circle {
   cursor: default;
-}
-.comment-hover .author {
-  font-weight: bold;
-}
-.comment-hover .date {
-  padding-left: 15px;
 }
 
 #word_list_view li {

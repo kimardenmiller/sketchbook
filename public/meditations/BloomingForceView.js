@@ -136,10 +136,13 @@ return Backbone.View.extend({
   },
 
   _onClickNode: function(e) {
-    if (this._blockHover)
+    if (this._blockHover) {
       return;
+    }
 
     this._blockHover = true;
+    this.svgNodeG.classed('locked', true);
+
     this.trigger('clickNode', this, d3.select(e.target).datum(), e);
   },
 
@@ -231,6 +234,7 @@ return Backbone.View.extend({
         .attr("cx", function(d) { return d.x; })
         .attr("cy", function(d) { return d.y; })
         .style('fill', COLOR_NODE)
+        .style('display', 'none') // Needed so you can't click on these before they're released
         .style('opacity', 0)
         .call(this.force.drag);
 
@@ -259,11 +263,11 @@ return Backbone.View.extend({
         allMottoNodesSel = this.svgNodeG.selectAll('circle.node').data(motto.wordNodes, WORD_NODE_JOIN),
         allLinksSel = this.svgLinkG.selectAll('line.link').data(mottoLinks, LINK_JOIN);
 
-    meditateOnNodeSel.style('opacity', 1); // incase it's a new node and set to 0
+    meditateOnNodeSel.style('display', 'inline').style('opacity', 1); // incase it's a new node and set to 0
 
     // Clear previous selections if they still exist
     if (this._lastNewMottoController) {
-      this._lastNewMottoController._fastFocus().releaseNewNodes().releaseMeditateOn().unfocusAll();
+      this._lastNewMottoController._fastFocus().releaseNewNodes(true).releaseMeditateOn().unfocusAll();
       delete this._lastNewMottoController;
     }
     this._lastNewMottoController = new function() {
@@ -281,6 +285,7 @@ return Backbone.View.extend({
 
       this.focusAllMottoNodes = function(duration) {
         allMottoNodesSel
+        .style('display', 'inline') // new nodes started off hidden so you couldn't click on them
         .transition().duration(duration || 800)
         .attr('r', function(d) { return self.nodeSizeScale( Object.keys(d.shownMottos).length ); })
         .style('fill', COLOR_FOCUSED_NODE)
@@ -300,10 +305,19 @@ return Backbone.View.extend({
       };
 
       // Want to call this AFTER focusAllMottoNodes since they have opacity 0 until that's called
-      this.releaseNewNodes = function() {
+      this.releaseNewNodes = function(_skipUnlock) {
         newNodes.forEach(function(wn) { wn.fixed = false; });
         meditateOnWordNode.fixed = true;
         self.force.start();
+
+        // let things wiggle a bit more before allowing new hovers
+        if (!_skipUnlock) {
+          setTimeout(function() {
+            self._blockHover = false;
+            self.svgNodeG.classed('locked', false);
+          }, 500);
+        }
+
         return this;
       };
 
@@ -319,14 +333,9 @@ return Backbone.View.extend({
         return this;
       };
 
-      this.unfocusAll = function(duration) {
+      this.unfocusAll = function(duration, _skipUnlock) {
         allMottoNodesSel.transition().duration(duration || 800).style('fill', COLOR_NODE);
         allLinksSel.transition().duration(duration || 800).style('stroke', STYLE_LINK_STROKE);
-
-        // let things wiggle a bit more before allowing new hovers
-        setTimeout(function() {
-          self._blockHover = false;
-        }, 800);
 
         return this;
       };
