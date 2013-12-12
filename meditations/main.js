@@ -5,7 +5,7 @@
  *
  * In your js console, execute go() to start the mock clock that makes the conversation grow.
  */
-require(["/sketchbook_config.js"], function() {
+require(["/meditations/sketchbook_config.js"], function() {
 require(
   ["jquery",
    "lodash",
