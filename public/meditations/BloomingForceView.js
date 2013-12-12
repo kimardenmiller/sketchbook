@@ -71,6 +71,7 @@ return Backbone.View.extend({
 
   events: {
     "mouseover circle": "_onHoverNode",
+    "mouseout circle": "_onHoverOutNode",
     "click circle": "_onClickNode",
   },
 
@@ -127,6 +128,11 @@ return Backbone.View.extend({
       return;
 
     this.trigger('hoverNode', this, d3.select(e.target).datum(), e);
+  },
+
+  _onHoverOutNode: function(e) {
+    if (this._blockHover)
+      return;
   },
 
   _onClickNode: function(e) {
@@ -279,6 +285,7 @@ return Backbone.View.extend({
         .attr('r', function(d) { return self.nodeSizeScale( Object.keys(d.shownMottos).length ); })
         .style('fill', COLOR_FOCUSED_NODE)
         .style('opacity', 1);
+        meditateOnNodeSel.transition().style('fill', 'orchid');
         allLinksSel.transition().duration(duration || 800).style('stroke', STYLE_FOCUSED_LINK_STROKE);
         return this;
       };
@@ -315,7 +322,12 @@ return Backbone.View.extend({
       this.unfocusAll = function(duration) {
         allMottoNodesSel.transition().duration(duration || 800).style('fill', COLOR_NODE);
         allLinksSel.transition().duration(duration || 800).style('stroke', STYLE_LINK_STROKE);
-        self._blockHover = false;
+
+        // let things wiggle a bit more before allowing new hovers
+        setTimeout(function() {
+          self._blockHover = false;
+        }, 800);
+
         return this;
       };
     }();

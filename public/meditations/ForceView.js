@@ -1,4 +1,6 @@
 /**
+ * @deprecated This was first iteration, look at BloomingForceView.  Or, look at git history for what this looked like.
+ *
  * @module {meditations.ForceView} Force view of word nodes used in mottos
  *
  * Requires:

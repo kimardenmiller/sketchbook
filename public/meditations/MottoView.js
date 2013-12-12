@@ -136,7 +136,7 @@ return Backbone.View.extend({
       d3.select(this).transition()
       .duration(1000)
       .style("opacity", 1)
-      .style("color", "red");
+      .style("color", function(d) { return d.isSelected ? "orchid" : "red"; });
     });
 
     // Bring in the school after the same delay
@@ -165,6 +165,8 @@ return Backbone.View.extend({
         fvControlBoard.unfocusAll(1000);
         mottoSpans.transition().duration(1000).style('color', 'DarkSlateBlue');
         d3.select("#motto_school").transition().duration(1000).style('color', 'DarkSlateBlue');
+
+        delete this._debounceHoverNode;
       }, opts.meditateWordMs * 2);
     }
 
