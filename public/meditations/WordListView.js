@@ -9,8 +9,8 @@
  * Events:
  *   selectedWordNode (this, {Object} wordNode)
  */
-define(["jquery", "d3", "lodash", "backbone"],
-function($, d3, _, Backbone) {
+define(["jquery", "d3", "lodash", "backbone", "meditations/Palette"],
+function($, d3, _, Backbone, COLOR) {
 
 
 return Backbone.View.extend({
@@ -54,9 +54,9 @@ return Backbone.View.extend({
     lis
     .style('color', function(wn) {
       if (wn.shownMottos && Object.keys(wn.shownMottos).length === wn.mottos.length) {
-        return 'lightgrey';
+        return COLOR.NO_MORE;
       } else {
-        return 'steelblue';
+        return COLOR.MORE;
       }
     });
 

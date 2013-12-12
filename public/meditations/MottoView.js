@@ -7,8 +7,8 @@
  *
  * Events:
  */
-define(["jquery", "d3", "lodash", "backbone"],
-function($, d3, _, Backbone) {
+define(["jquery", "d3", "lodash", "backbone", "meditations/Palette"],
+function($, d3, _, Backbone, COLOR) {
 
 
 return Backbone.View.extend({
@@ -113,19 +113,19 @@ return Backbone.View.extend({
     .each(function(aMotto) {
       // d3's classed sucks, revert to jquery
       $(this)
-      .css('color', 'grey')
+      .css('color', COLOR.MOTTO)
       .addClass('fa')
       .addClass('fa-' + ((aMotto.id in wordNode.shownMottos) ? 'circle' : 'circle-o'));
 
       if (aMotto === motto)
         d3.select(this)
-        .style('color', 'red')
+        .style('color', COLOR.FOCUS)
         .transition().duration(opts.meditateWordMs)
         .each("end", function() {
 
           d3.select(this).transition()
           .duration(1000)
-          .style('color', 'grey');
+          .style('color', COLOR.MOTTO);
         });
     });
 
@@ -135,7 +135,7 @@ return Backbone.View.extend({
     .enter().append("span")
       .attr("class", function(d) { return d.isSelected ? "selected" : ""; })
       .style("opacity", function(d) { return d.isSelected ? 1 : 0; })
-      .style("color", function(d) { return d.isSelected ? "red" : ""; })
+      .style("color", function(d) { return d.isSelected ? COLOR.FOCUS : ""; })
       .text(function(d) {return d.raw + " "; });
 
     // do nothing, just reflect on the word for a few seconds
@@ -147,7 +147,7 @@ return Backbone.View.extend({
       d3.select(this).transition()
       .duration(1000)
       .style("opacity", 1)
-      .style("color", function(d) { return d.isSelected ? "orchid" : "red"; });
+      .style("color", function(d) { return d.isSelected ? COLOR.MEDITATE_ON : COLOR.FOCUS; });
     });
 
     // Bring in the school after the same delay
@@ -155,7 +155,7 @@ return Backbone.View.extend({
     .interrupt()
       .text(" - " + motto.university)
       .style("opacity", 0)
-      .style('color', 'red')
+      .style('color', COLOR.FOCUS)
     .transition().duration(opts.meditateWordMs)
     .each("end", function() {
       d3.select(this).transition()
@@ -174,8 +174,8 @@ return Backbone.View.extend({
           fvControlBoard.releaseMeditateOn();
         }
         fvControlBoard.unfocusAll(1000);
-        mottoSpans.transition().duration(1000).style('color', 'darkgrey').style('opacity', 1);
-        d3.select("#motto_school").transition().duration(1000).style('color', 'darkgrey').style('opacity', 1);
+        mottoSpans.transition().duration(1000).style('color', COLOR.NO_MORE).style('opacity', 1);
+        d3.select("#motto_school").transition().duration(1000).style('color', COLOR.NO_MORE).style('opacity', 1);
 
         delete this._debounceHoverNode;
       }, opts.meditateWordMs * 2);

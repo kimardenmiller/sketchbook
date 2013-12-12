@@ -12,9 +12,15 @@ require(
    "meditations/promiseWordNodes",
    "meditations/BloomingForceView",
    "meditations/MottoView",
-   "meditations/WordListView"
+   "meditations/WordListView",
+   "meditations/Palette"
    ],
-  function($, _, promiseWordNodes, BloomingForceView, MottoView, WordListView) {
+  function($, _, promiseWordNodes, BloomingForceView, MottoView, WordListView, COLOR) {
+
+    $('body').css({
+      'background-color': COLOR.BG,
+      'color': COLOR.MOTTO
+    });
 
     promiseWordNodes
     .done(function(wordNodes, mottos) {

@@ -13,8 +13,8 @@
  *   clickNode (this, {Object} selectedWordNode, {jqEvent})
  *     Emitted when we click a word node
  */
-define(["jquery", "d3", "lodash", "backbone"],
-function($, d3, _, Backbone) {
+define(["jquery", "d3", "lodash", "backbone", "meditations/Palette"],
+function($, d3, _, Backbone, COLOR) {
 
 var DEFAULT_W = 600,
     DEFAULT_H = 500,
@@ -28,39 +28,19 @@ var WORD_NODE_JOIN = function(d) { return d.id; },
     LINK_JOIN = function(l) { return l.id; },
 
     COLOR_NODE = function(d) {
-      return (!d.shownMottos || Object.keys(d.shownMottos).length === d.mottos.length) ? "lightgrey" : "steelblue";
+      return (!d.shownMottos || Object.keys(d.shownMottos).length === d.mottos.length) ? COLOR.NO_MORE : COLOR.MORE;
     },
 
     COLOR_FOCUSED_NODE = function(d) {
-      return 'red';
+      return COLOR.FOCUS;
     },
 
     STYLE_FOCUSED_LINK_STROKE = function(d) {
-      return 'red';
-    },
-
-    STYLE_EACH_LINK = function(d) {
-      var style;
-      if (d.source.mottos.length === 1 || d.target.mottos.length === 1) {
-        style = {
-          stroke: '#eee',
-          strokeWidth: '0.5px'
-        };
-
-      } else {
-        style = {
-          stroke: 'steelblue',
-          strokeWidth: '1.5px'
-        };
-      }
-
-      d3.select(this)
-      .transition() // inherit transition timings from the .each() call
-      .style(style);
+      return COLOR.FOCUS;
     },
 
     STYLE_LINK_STROKE = function(d) {
-      return (d.source.mottos.length === 1 || d.target.mottos.length === 1) ? '#eee' : 'steelblue';
+      return (d.source.mottos.length === 1 || d.target.mottos.length === 1) ? COLOR.NO_MORE_LINK : COLOR.MORE;
     },
 
     STYLE_LINK_STROKE_WIDTH = function(d) {
@@ -290,7 +270,7 @@ return Backbone.View.extend({
         .attr('r', function(d) { return self.nodeSizeScale( Object.keys(d.shownMottos).length ); })
         .style('fill', COLOR_FOCUSED_NODE)
         .style('opacity', 1);
-        meditateOnNodeSel.transition().style('fill', 'orchid');
+        meditateOnNodeSel.transition().style('fill', COLOR.MEDITATE_ON);
         allLinksSel.transition().duration(duration || 800).style('stroke', STYLE_FOCUSED_LINK_STROKE);
         return this;
       };
