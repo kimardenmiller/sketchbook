@@ -57,14 +57,14 @@ svg > g.nodes.locked > circle {
 
 </head>
 
-<body>
+<body style="background-color: #2E1139">
   <!-- Load sketch: load JamJS's requireJs, but reference the experiment's main.js to start your sketch -->
   <script data-main="main"
     src="/lib/require.js"></script>
-  <div class="container">
+  <div class="container" style="display:none;">
     <div class="row-fluid" style="padding: 20px;">
-      <div id="force_view" class="pull-left span4"></div>
-      <div id="motto_view" class="pull-left span4">
+      <div id="force_view" class="pull-left span4" style="height: 500px;"></div>
+      <div id="motto_view" class="pull-left span4" style="height: 500px;">
         <div id="motto_render"></div>
         <div id="motto_school"></div>
         <div id="num_mottos" style="font-size:8px; color: grey;"></div>
@@ -78,6 +78,11 @@ svg > g.nodes.locked > circle {
         </div>
       </div>
     </div>
+  </div>
+
+  <div id='footer' class="navbar navbar-fixed-bottom hide">
+    <span class='title'>meditations</span>
+    <span class='byline'>by dan lopuch | @floatrock | dlopuch.github.io/sketchbook/meditations</span>
   </div>
 
 

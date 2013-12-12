@@ -22,6 +22,17 @@ require(
       'color': COLOR.MOTTO
     });
 
+    $('input').css({
+      backgroundColor: COLOR.BG,
+      border: '1px solid ' + COLOR.NO_MORE,
+      color: COLOR.MORE
+    });
+
+    $('.container').show();
+
+    $('#footer .byline').css('color', COLOR.NO_MORE);
+    $('#footer').removeClass('hide');
+
     promiseWordNodes
     .done(function(wordNodes, mottos) {
 
