@@ -19,10 +19,10 @@ require.config({
 
     //-------
     // jamjs sucks and is outdated.  Start adding manual js libraries.
-    "d3": "/lib-user/d3.v3.3.2.min",
-    "bootstrap": "/lib-user/bootstrap_232/js/bootstrap.min",
-    "tpl": "/lib-user/tpl",
-    "lodash": "/lib-user/lodash.2.4.1.min"
+    "d3": "/sketchbook/lib-user/d3.v3.3.2.min",
+    "bootstrap": "/sketchbook/lib-user/bootstrap_232/js/bootstrap.min",
+    "tpl": "/sketchbook/lib-user/tpl",
+    "lodash": "/sketchbook/lib-user/lodash.2.4.1.min"
   },
 
   shim: {
