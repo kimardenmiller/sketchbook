@@ -299,6 +299,7 @@ return Backbone.View.extend({
       this._fastFocus = function() {
         allMottoNodesSel
         .interrupt()
+        .style('display', 'inline')
         .style('opacity', 1)
         .attr('r', function(d) { return self.nodeSizeScale( Object.keys(d.shownMottos).length ); });
         return this;
