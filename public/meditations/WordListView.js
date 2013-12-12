@@ -17,7 +17,7 @@ return Backbone.View.extend({
 
   events: {
     'keyup input.search': 'searchWords',
-    'click li': 'clickWordNode'
+    'click div.word-text': 'clickWordNode'
   },
 
   initialize: function(opts) {
