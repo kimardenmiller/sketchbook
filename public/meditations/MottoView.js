@@ -29,9 +29,21 @@ return Backbone.View.extend({
     var lastNextMs = new Date() - this._lastNext;
     this._lastNext = new Date();
 
-    this._curMottoI = (this._curMottoI + 1) % wordNode.mottos.length;
-    this._showMotto(wordNode.mottos[this._curMottoI], wordNode, {
-      meditateWordMs: Math.min(lastNextMs, 800)
+    var nextMotto, lastMottoI;
+    _.forEach(wordNode.mottos, function(m, i) {
+      if (!(m.id in wordNode.shownMottos)) {
+        nextMotto = m;
+      } else if (m === wordNode.lastMottoShown) {
+        lastMottoI = i;
+      }
+    });
+
+    if (!nextMotto) {
+      nextMotto = wordNode.mottos[ ((lastMottoI || 0) + 1) % wordNode.mottos.length ];
+    }
+
+    this._showMotto(nextMotto, wordNode, {
+      //meditateWordMs: Math.min(lastNextMs, 800)
     });
   },
 
@@ -51,8 +63,9 @@ return Backbone.View.extend({
     this._debounceHoverNode = wordNode;
 
     this._showMotto(wordNode.lastMottoShown, wordNode, {
-      //meditateWordMs: 500,
-      dontReleaseMeditate: true
+      meditateWordMs: 400,
+      dontReleaseMeditate: true,
+      skipUnfocus: true
     });
   },
 
@@ -70,10 +83,16 @@ return Backbone.View.extend({
     // So we can see the motto again on hover
     motto.wordNodes.forEach(function(wn) {
       wn.lastMottoShown = motto;
+
+      if (!wn.shownMottos)
+        wn.shownMottos = {};
+
+      if (!(motto.id in wn.shownMottos))
+        wn.shownMottos[motto.id] = true;
     });
 
     // Add all the nodes for this motto and get a handle their puppet strings
-    var fvControlBoard = this.options.forceView.addMotto(motto, wordNode);
+    var fvControlBoard = this._lastControlBoard = this.options.forceView.addMotto(motto, wordNode);
 
 
     var mottoChunks = motto.motto
@@ -86,11 +105,11 @@ return Backbone.View.extend({
       };
     });
 
-    console.log("\n\n-----------------");
-    wordNode.mottos.forEach(function(m, i) {
-      console.log((m === motto ? "> " : "") + m.motto + "   (" + m.university + ")");
-    });
-    console.log("   - \"" + wordNode.id + "\" (" + wordNode.count + ")");
+    // console.log("\n\n-----------------");
+    // wordNode.mottos.forEach(function(m, i) {
+      // console.log((m === motto ? "> " : "") + m.motto + "   (" + m.university + ")");
+    // });
+    // console.log("   - \"" + wordNode.id + "\" (" + wordNode.count + ")");
 
     // Draw the selector dots
     $("#num_mottos").html( wordNode.mottos.reduce(
@@ -108,7 +127,7 @@ return Backbone.View.extend({
       .style("color", function(d) { return d.isSelected ? "red" : ""; })
       .text(function(d) {return d.raw + " "; });
 
-    // do nothing, just reflect on the word for 5 seconds
+    // do nothing, just reflect on the word for a few seconds
     fvControlBoard.focusMeditateOn();
     mottoSpans.transition().duration(opts.meditateWordMs)
 
@@ -136,17 +155,18 @@ return Backbone.View.extend({
     // And highlight the links when the rest of the phrase comes in
     this._makeInterruptableTimer('_queuedFocusOtherNodes', function() {
       fvControlBoard.focusAllMottoNodes().releaseNewNodes();
-      delete this._queuedHighlightLinks;
     }, opts.meditateWordMs);
 
-    this._makeInterruptableTimer('_queuedSemiFocus', function() {
-      if (!opts.dontReleaseMeditate) {
-        fvControlBoard.releaseMeditateOn();
-      }
-      fvControlBoard.semiFocusAll(1000);
-      mottoSpans.transition().duration(1000).style('color', 'DarkSlateBlue');
-      d3.select("#motto_school").transition().duration(1000).style('color', 'DarkSlateBlue');
-    }, opts.meditateWordMs * 2);
+    if (!opts.skipUnfocus) {
+      this._makeInterruptableTimer('_queuedSemiFocus', function() {
+        if (!opts.dontReleaseMeditate) {
+          fvControlBoard.releaseMeditateOn();
+        }
+        fvControlBoard.unfocusAll(1000);
+        mottoSpans.transition().duration(1000).style('color', 'DarkSlateBlue');
+        d3.select("#motto_school").transition().duration(1000).style('color', 'DarkSlateBlue');
+      }, opts.meditateWordMs * 2);
+    }
 
 
     // Adjust the height to match the position of the target el
@@ -159,10 +179,18 @@ return Backbone.View.extend({
 
   _makeInterruptableTimer: function(attrName, action, timeMs) {
     if (this[attrName] !== undefined) {
-      clearTimeout(this[attrName]);
+      clearTimeout(this[attrName].id);
       delete this[attrName];
     }
-    this[attrName] = setTimeout(action.bind(this), timeMs);
+
+    var actionProxy = function() {
+      action.call(this);
+      delete this[attrName];
+    }.bind(this);
+    this[attrName] = {
+      id: setTimeout(actionProxy, timeMs),
+      triggerNow: actionProxy
+    };
   },
 
   _forceLayoutTick: function() {

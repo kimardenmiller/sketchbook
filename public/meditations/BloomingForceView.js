@@ -28,7 +28,7 @@ var WORD_NODE_JOIN = function(d) { return d.id; },
     LINK_JOIN = function(l) { return l.id; },
 
     COLOR_NODE = function(d) {
-      return d.mottos.length === 1 ? "lightgrey" : "steelblue";
+      return (!d.shownMottos || Object.keys(d.shownMottos).length === d.mottos.length) ? "lightgrey" : "steelblue";
     },
 
     COLOR_FOCUSED_NODE = function(d) {
@@ -71,6 +71,7 @@ return Backbone.View.extend({
 
   events: {
     "mouseover circle": "_onHoverNode",
+    "click circle": "_onClickNode",
   },
 
   initialize: function(opts) {
@@ -122,7 +123,18 @@ return Backbone.View.extend({
   },
 
   _onHoverNode: function(e) {
-    this.trigger('hoverNode', this, d3.select(e.target).datum());
+    if (this._blockHover)
+      return;
+
+    this.trigger('hoverNode', this, d3.select(e.target).datum(), e);
+  },
+
+  _onClickNode: function(e) {
+    if (this._blockHover)
+      return;
+
+    this._blockHover = true;
+    this.trigger('clickNode', this, d3.select(e.target).datum(), e);
   },
 
   /**
@@ -137,6 +149,7 @@ return Backbone.View.extend({
    *   releaseMeditateOn: {function()} Releases the meditateOnWordNode to the forces of the force view
    */
   addMotto: function(motto, meditateOnWordNode) {
+
     var newNodes = [];
     motto.wordNodes.forEach(function(wn) {
       if (!(wn.id in this._nodesIdx)) {
@@ -176,8 +189,8 @@ return Backbone.View.extend({
       meditateOnWordNode.y = this._forceSize[1]/2;
       meditateOnWordNode.px = this._forceSize[0]/2;
       meditateOnWordNode.py = this._forceSize[1]/2;
-      meditateOnWordNode.fixed = true;
     }
+    meditateOnWordNode.fixed = true;
 
     // New nodes all start under the meditateOnWordNode node -- they bloom/pop out from there when released.
     newNodes.forEach(function(wn) {
@@ -200,10 +213,10 @@ return Backbone.View.extend({
 
     if (newNodes.length) {
       var nodeSel = this.svgNodeG.selectAll("circle.node")
-        .data(newNodes, WORD_NODE_JOIN)
-      .enter().append('circle')
+        .data(newNodes, WORD_NODE_JOIN);
+      nodeSel.enter().append('circle')
         .attr('class', 'node')
-        .attr('r', function(d) { return self.nodeSizeScale(d.count); })
+        .attr('r', function(d) { return self.nodeSizeScale( Object.keys(d.shownMottos).length ); })
         .attr("cx", function(d) { return d.x; })
         .attr("cy", function(d) { return d.y; })
         .style('fill', COLOR_NODE)
@@ -239,7 +252,7 @@ return Backbone.View.extend({
 
     // Clear previous selections if they still exist
     if (this._lastNewMottoController) {
-      this._lastNewMottoController.releaseNewNodes().releaseMeditateOn().unfocusAll();
+      this._lastNewMottoController._fastFocus().releaseNewNodes().releaseMeditateOn().unfocusAll();
       delete this._lastNewMottoController;
     }
     this._lastNewMottoController = new function() {
@@ -248,16 +261,29 @@ return Backbone.View.extend({
       this.meditateOnEl = meditateOnNodeSel[0][0];
 
       this.focusMeditateOn = function(duration) {
-        meditateOnNodeSel.transition().duration(duration || 800).style('fill', COLOR_FOCUSED_NODE);
+        meditateOnWordNode.fixed = true;
+        meditateOnNodeSel.transition().duration(duration || 800)
+        .attr('r', function(d) { return self.nodeSizeScale( Object.keys(d.shownMottos).length ); })
+        .style('fill', COLOR_FOCUSED_NODE);
         return this;
       };
 
       this.focusAllMottoNodes = function(duration) {
         allMottoNodesSel
         .transition().duration(duration || 800)
+        .attr('r', function(d) { return self.nodeSizeScale( Object.keys(d.shownMottos).length ); })
         .style('fill', COLOR_FOCUSED_NODE)
         .style('opacity', 1);
         allLinksSel.transition().duration(duration || 800).style('stroke', STYLE_FOCUSED_LINK_STROKE);
+        return this;
+      };
+
+      // Incase we expand things too quickly -- show everything if the next one is starting
+      this._fastFocus = function() {
+        allMottoNodesSel
+        .interrupt()
+        .style('opacity', 1)
+        .attr('r', function(d) { return self.nodeSizeScale( Object.keys(d.shownMottos).length ); });
         return this;
       };
 
@@ -284,6 +310,7 @@ return Backbone.View.extend({
       this.unfocusAll = function(duration) {
         allMottoNodesSel.transition().duration(duration || 800).style('fill', COLOR_NODE);
         allLinksSel.transition().duration(duration || 800).style('stroke', STYLE_LINK_STROKE);
+        self._blockHover = false;
         return this;
       };
     }();

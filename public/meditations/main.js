@@ -19,6 +19,10 @@ require(
     promiseWordNodes
     .done(function(wordNodes, mottos) {
 
+      mottos.forEach(function(m, i) {
+        m.id = i;
+      });
+
       window.forceView = new BloomingForceView({
         el: "#force_view",
         wordNodes: wordNodes
