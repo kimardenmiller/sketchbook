@@ -167,6 +167,14 @@ return Backbone.View.extend({
         mottoLinks = [];
     motto.wordNodes.forEach(function(wn) {
       _.forIn(wn.links, function(link, toWn) {
+        if (link.source.id in mottoNodesIdx && link.target.id in mottoNodesIdx) {
+          mottoLinks.push(link);
+        } else {
+          // this link is not part of the current motto, move along.
+          return;
+        }
+
+
         if (!(link.id in this._linksIdx) &&
             link.source.id in this._nodesIdx &&
             link.target.id in this._nodesIdx) {
@@ -175,9 +183,6 @@ return Backbone.View.extend({
           newLinks.push(link);
         }
 
-        if (link.source.id in mottoNodesIdx && link.target.id in mottoNodesIdx) {
-          mottoLinks.push(link);
-        }
       }, this);
     }, this);
 
