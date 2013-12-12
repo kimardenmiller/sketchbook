@@ -17,6 +17,7 @@ return Backbone.View.extend({
     if (!options.wordListView) throw new Error("WordListView instance required!");
 
     this.listenTo(this.options.wordListView, "selectedWordNode", this._pickAndShowMotto);
+    this.options.wordListView.listenTo(this, "showMotto", this.options.wordListView.updateMottos);
     this.listenTo(this.options.forceView, "hoverNode", this._handleHoverNode);
     this.listenTo(this.options.forceView, "clickNode", this._pickAndShowMotto);
 
@@ -167,8 +168,8 @@ return Backbone.View.extend({
           fvControlBoard.releaseMeditateOn();
         }
         fvControlBoard.unfocusAll(1000);
-        mottoSpans.transition().duration(1000).style('color', 'DarkSlateBlue');
-        d3.select("#motto_school").transition().duration(1000).style('color', 'DarkSlateBlue');
+        mottoSpans.transition().duration(1000).style('color', 'darkgrey');
+        d3.select("#motto_school").transition().duration(1000).style('color', 'darkgrey');
 
         delete this._debounceHoverNode;
       }, opts.meditateWordMs * 2);
@@ -181,6 +182,7 @@ return Backbone.View.extend({
     }, 200);
     //this._alignWithEl = fvControlBoard.meditateOnEl;
 
+    this.trigger("showMotto", this, motto, wordNode);
   },
 
   _makeInterruptableTimer: function(attrName, action, timeMs) {

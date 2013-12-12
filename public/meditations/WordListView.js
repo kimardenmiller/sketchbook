@@ -34,26 +34,61 @@ return Backbone.View.extend({
 
   searchWords: function(e) {
     var text = $(e.target).val().trim();
-    if (!text)
-      return this.render();
 
-    this.render(this.words.filter(function(w) { return w.id.indexOf(text) > -1; }));
-  },
-
-  render: function(words) {
-    if (!words)
+    var words;
+    if (text)
+      words = this.words.filter(function(w) { return w.id.indexOf(text) > -1; });
+    else
       words = this.words;
 
+    d3.select(this.$('ul')[0]).selectAll('li')
+      .data(words, function(d) { return d.id;} )
+    .style('display', 'block')
+    .exit()
+      .style('display', 'none');
+  },
+
+  updateMottos: function(mottoView, motto, wordNode) {
+    var lis = d3.select(this.$('ul')[0]).selectAll('li').data(this.words, function(d) {return d.id;});
+
+    lis
+    .style('color', function(wn) {
+      if (wn.shownMottos && Object.keys(wn.shownMottos).length === wn.mottos.length) {
+        return 'lightgrey';
+      } else {
+        return 'steelblue';
+      }
+    });
+
+    lis.each(function(wn) {
+      d3.select(this).select('div.shown-nodes').selectAll('i')
+      .classed('fa-circle', function(m) { return wn.shownMottos && m.id in wn.shownMottos; })
+      .classed('fa-circle-o', function(m) { return !(wn.shownMottos && m.id in wn.shownMottos); });
+    });
+  },
+
+  render: function() {
     var lis = d3.select(this.$('ul')[0]).selectAll('li')
-      .data(words, function(d) {return d.id;});
+      .data(this.words, function(d) {return d.id;})
+    .enter().append('li')
+      .style('display', 'block');
 
-    lis.enter().append('li').append('span')
-    .text(function(d) {return d.id;});
+    lis.append('div')
+      .classed('word-text', true)
+      .text(function(d) {return d.id;});
 
-    lis.style('display', 'list-item');
+    lis.append('div')
+    .classed('shown-nodes', true)
+    .each(function(wn) {
+      d3.select(this).selectAll('i')
+      .data(wn.mottos).enter().append('i')
+      .classed('fa fa-circle-o', true);
+    });
 
-    lis.exit()
-    .style('display', 'none');
+
+
+
+    this.updateMottos();
   }
 
 });
