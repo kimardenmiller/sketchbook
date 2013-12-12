@@ -8,7 +8,7 @@
  */
 require.config({
 
-  baseUrl: "/", // needed b/c experiment index.html's reference their local main.js as the main-data (and main-data is used as default baseUrl)
+  baseUrl: "/meditations/", // needed b/c experiment index.html's reference their local main.js as the main-data (and main-data is used as default baseUrl)
 
   paths: {
     // paths can be used to shorten/alias certain modules:
