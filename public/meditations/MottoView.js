@@ -174,7 +174,7 @@ return Backbone.View.extend({
           fvControlBoard.releaseMeditateOn();
         }
         fvControlBoard.unfocusAll(1000);
-        mottoSpans.transition().duration(1000).style('color', COLOR.NO_MORE).style('opacity', 1);
+        mottoSpans.transition().duration(1000).style('color', COLOR.MOTTO).style('opacity', 1);
         d3.select("#motto_school").transition().duration(1000).style('color', COLOR.NO_MORE).style('opacity', 1);
 
         delete this._debounceHoverNode;

@@ -39,7 +39,7 @@ define([], function() {
     MORE: '#BB4057',
     NO_MORE: '#7A1248',
     NO_MORE_LINK: '#7A1248',
-    MOTTO: '#7A1248',
+    MOTTO: '#BB4057',
     BG: '#2E1139'
   };
 });
