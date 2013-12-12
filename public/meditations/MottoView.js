@@ -112,11 +112,18 @@ return Backbone.View.extend({
     // console.log("   - \"" + wordNode.id + "\" (" + wordNode.count + ")");
 
     // Draw the selector dots
-    $("#num_mottos").html( wordNode.mottos.reduce(
-      function(html, m) {
-        return html + "<i class='fa fa-" + (m === motto ? "circle" : "circle-o") + "'></i> ";
-      }, ''
-    ));
+    d3.select("#num_mottos").selectAll("i").remove();
+    d3.select("#num_mottos").selectAll("i")
+    .data(wordNode.mottos).enter().append("i")
+    .each(function(aMotto) {
+      // d3's classed sucks, revert to jquery
+      $(this)
+      .addClass('fa')
+      .addClass('fa-' + ((aMotto.id in wordNode.displayedMottosIdx) ? 'circle' : 'circle-o'));
+
+      if (aMotto === motto)
+        $(this).addClass('focus');
+    });
 
     d3.select("#motto_render").selectAll("span").remove();
     var mottoSpans = d3.select("#motto_render").selectAll("span")
