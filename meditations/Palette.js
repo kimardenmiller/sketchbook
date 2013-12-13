@@ -33,13 +33,23 @@ define([], function() {
   // };
 
   //http://www.colourlovers.com/palette/2361969/flowing_flames
+  // return {
+    // MEDITATE_ON: '#FAE3C4',
+    // FOCUS: '#FEA879',
+    // MORE: '#BB4057',
+    // NO_MORE: '#7A1248',
+    // NO_MORE_LINK: '#7A1248',
+    // MOTTO: '#BB4057',
+    // BG: '#2E1139'
+  // };
+
   return {
-    MEDITATE_ON: '#FAE3C4',
+    BG: '#242227',
     FOCUS: '#FEA879',
-    MORE: '#BB4057',
-    NO_MORE: '#7A1248',
-    NO_MORE_LINK: '#7A1248',
-    MOTTO: '#BB4057',
-    BG: '#2E1139'
+    MEDITATE_ON: '#FAE3C4',
+    MORE: '#56969F',
+    NO_MORE: '#1e495a',
+    NO_MORE_LINK: '#1e495a',
+    MOTTO: '#276179'
   };
 });
