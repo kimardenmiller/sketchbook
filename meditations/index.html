@@ -61,10 +61,37 @@ svg > g.nodes.locked circle {
   <!-- Load sketch: load JamJS's requireJs, but reference the experiment's main.js to start your sketch -->
   <script data-main="main"
     src="/sketchbook/lib/require.js"></script>
+
+  <div id="about_modal" class="modal hide fade">
+    <div class="modal-body main-desc">
+      <h3>meditations</h3>
+      <p>
+        We look at data with the hope of learning something about ourselves or our actions.  But how can we quantify
+        our hopes or what we aspire to be?  What themes would we find, and how would they be related?
+      </p>
+      <p>
+        I wanted to build a world to float from one such thought to next and discover all the connections.  For data,
+        I used the mottos of colleges and universities using a list scraped from Wikipedia, because what exemplifies our
+        ideals better than the words carved into our stone towers (I was also considering a corpus of fortune cookies,
+        but this seemed more interesting).
+      </p>
+      <p>
+        Click a word then take a moment to meditate on it.  See what thought it leads you to.  Then, use another word in
+        that thought to float over to another usage.  Or, pick an unrelated word.  See where the ideas and ideals take
+        you, and find delight when two separate webs link up.
+      </p>
+    </div>
+
+    <div class="modal-footer">
+      <p class="tagout hide">and remember, you are on a rock floating through space</p>
+      <a href="#" class="btn btn-primary">ok</a>
+    </div>
+  </div>
+
   <div class="container" style="display:none;">
     <div class="row-fluid" style="padding: 20px;">
-      <div id="force_view" class="pull-left span4" style="height: 500px;"></div>
-      <div id="motto_view" class="pull-left span4" style="height: 500px;">
+      <div id="force_view" class="pull-left span4" style="height: 450px;"></div>
+      <div id="motto_view" class="pull-left span4" >
         <div id="motto_render"></div>
         <div id="motto_school"></div>
         <div id="num_mottos" style="font-size:8px; color: grey;"></div>
@@ -78,17 +105,27 @@ svg > g.nodes.locked circle {
         </div>
       </div>
     </div>
+
+    <div id='footer' class="navbar navbar-fixed-bottom hide">
+      <span class='title'>meditations</span>
+      <span class='byline'>by dan lopuch &nbsp;&nbsp; @floatrock</span>
+    </div>
   </div>
 
-  <div id='footer' class="navbar navbar-fixed-bottom hide">
-    <span class='title'>meditations</span>
-    <span class='byline'>by dan lopuch | @floatrock | dlopuch.github.io/sketchbook/meditations</span>
-  </div>
 
 
 
 
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
+  ga('create', 'UA-46435735-1', 'dlopuch.github.io');
+  ga('send', 'pageview');
+
+</script>
 
 </body>
 </html>

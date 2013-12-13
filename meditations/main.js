@@ -13,10 +13,13 @@ require(
    "meditations/BloomingForceView",
    "meditations/MottoView",
    "meditations/WordListView",
-   "meditations/Palette"
+   "meditations/Palette",
+
+   "bootstrap"
    ],
   function($, _, promiseWordNodes, BloomingForceView, MottoView, WordListView, COLOR) {
 
+    // Poor man's CSS (actually, we defined all colors in javascript because D3 can't animate colors defined in styles)
     $('body').css({
       'background-color': COLOR.BG,
       'color': COLOR.MOTTO
@@ -34,6 +37,28 @@ require(
     $('#footer .byline').css('color', COLOR.MOTTO);
     $('#footer').removeClass('hide');
 
+    // ain't got time to recompile bootstrap, just add some overrides
+    $('#about_modal').css({
+      backgroundColor: COLOR.MOTTO
+    });
+    $('.modal-body').css({
+      backgroundColor: COLOR.MOTTO,
+      color: COLOR.MEDITATE_ON
+    });
+    $('.modal-body h3').css({
+      color: COLOR.FOCUS
+    });
+    $('.modal-footer').css({
+      color: COLOR.MEDITATE_ON,
+      backgroundColor: COLOR.BG,
+      borderTop: '1px solid ' + COLOR.BG,
+      boxShadow: 'inset 0 1px 0 ' + COLOR.BG,
+      '-webkit-box-shadow': 'inset 0 1px 0 ' + COLOR.BG,
+      '-moz-box-shadow': 'inset 0 1px 0 ' + COLOR.BG,
+    });
+
+
+
     promiseWordNodes
     .done(function(wordNodes, mottos) {
 
@@ -43,7 +68,7 @@ require(
 
       window.forceView = new BloomingForceView({
         el: "#force_view",
-        wordNodes: wordNodes
+        wordNodes: wordNodes,
       });
 
       window.wordListView = new WordListView({
@@ -58,6 +83,27 @@ require(
       });
       window.mottos = mottos;
       window.wordNodes = wordNodes;
+
+
+      $("#about_modal").modal({backdrop: 'static', keyboard: false});
+      $('#about_modal .btn-primary').on('click', function() {
+        $('#about_modal .btn-primary').remove();
+        d3.select('.modal-body.main-desc').transition().duration(500).style('opacity',0);
+        d3.select('.tagout')
+        .classed('hide', false)
+        .style('opacity', 0)
+        .transition().delay(800)
+        .each('end', function() {
+          d3.select(this)
+          .style('opacity', 1)
+          .transition().delay(2000).duration(3000)
+          .style('opacity', 0)
+          .each('end', function() {
+            $("#about_modal").modal('hide');
+          });
+        });
+      });
+
 
     })
     .fail(function() {
