@@ -45,7 +45,9 @@ var WORD_NODE_JOIN = function(d) { return d.id; },
 
     STYLE_LINK_STROKE_WIDTH = function(d) {
       return (d.source.mottos.length === 1 || d.target.mottos.length === 1) ? '0.5px' : '1.5px';
-    };
+    },
+
+    MAX_NODE_R = 10;
 
 return Backbone.View.extend({
 
@@ -76,10 +78,13 @@ return Backbone.View.extend({
     // this._showLinks = this._showLinks.bind(this);
 
 
+    this.nodeSizeScale = d3.scale.log()
+    .domain([1, d3.max(opts.wordNodes.list, function(wn) {return wn.mottos.length; })])
+    .range([2, MAX_NODE_R]);
 
-    // TODO: Make these configurable?
-    this.nodeSizeScale = d3.scale.log().domain([1, 65]).range([2,10]);
-    var chargeScale = d3.scale.linear().domain([1,65]).range([-10, -500]);
+    var chargeScale = d3.scale.linear()
+    .domain([1, d3.max(opts.wordNodes.list, function(wn) {return wn.mottos.length; })])
+    .range([-10, -500]);
 
     this._forceSize = [
       opts.w || this.$el.width()  || DEFAULT_W,
@@ -206,20 +211,45 @@ return Backbone.View.extend({
     var self = this;
 
     if (newNodes.length) {
-      var nodeSel = this.svgNodeG.selectAll("circle.node")
+      var nodeSel = this.svgNodeG.selectAll("svg.node-container")
         .data(newNodes, WORD_NODE_JOIN);
-      nodeSel.enter().append('circle')
-        .attr('class', 'node')
-        .attr('r', function(d) { return self.nodeSizeScale( Object.keys(d.shownMottos).length ); })
-        .attr("cx", function(d) { return d.x; })
-        .attr("cy", function(d) { return d.y; })
-        .style('fill', COLOR_NODE)
+      nodeSel.enter().append('svg')
+        .attr('class', 'node-container')
         .style('display', 'none') // Needed so you can't click on these before they're released
-        .style('opacity', 0)
+        .style('opacity', 0) // needed for fade-in's (can't tween display)
+        .attr("x", function(d) { return d.x; })
+        .attr("y", function(d) { return d.y; });
+
+      nodeSel.append('circle')
+        .classed('node-halo', true)
+        .attr('r', function(d) { return self.nodeSizeScale( Object.keys(d.mottos).length ); })
+        .style('fill', 'none') //HEYDAN TODO TEMP
+        .style('stroke', COLOR.MORE)
+        .style('stroke-width', '1px')
+        .style('opacity', 0.5)
+        .attr("cx", MAX_NODE_R + 2)
+        .attr("cy", MAX_NODE_R + 2)
+        .call(this.force.drag);
+
+      nodeSel.append('circle')
+        .classed('node-hitzone', true)
+        .attr('r', function(d) { return self.nodeSizeScale( Object.keys(d.mottos).length ); })
+        .style('fill', 'white')
+        .style('opacity', 0) // invisible, but clickable
+        .attr("cx", MAX_NODE_R + 2)
+        .attr("cy", MAX_NODE_R + 2)
+        .call(this.force.drag);
+
+      nodeSel.append('circle')
+        .classed('node', true)
+        .attr('r', function(d) { return self.nodeSizeScale( Object.keys(d.shownMottos).length ); })
+        .attr("cx", MAX_NODE_R + 2)
+        .attr("cy", MAX_NODE_R + 2)
+        .style('fill', COLOR_NODE)
         .call(this.force.drag);
 
       // memoize total joined node selection for fast tick'ing
-      this._nodeSel = this.svgNodeG.selectAll('circle.node').data(this._nodes, WORD_NODE_JOIN);
+      this._nodeContainerSel = this.svgNodeG.selectAll('svg.node-container').data(this._nodes, WORD_NODE_JOIN);
     }
 
     if (newLinks.length) {
@@ -239,11 +269,12 @@ return Backbone.View.extend({
     }
 
     // Pre-calculate some selections for the controlboard.
-    var meditateOnNodeSel = this.svgNodeG.selectAll('circle.node').data([meditateOnWordNode], WORD_NODE_JOIN),
-        allMottoNodesSel = this.svgNodeG.selectAll('circle.node').data(motto.wordNodes, WORD_NODE_JOIN),
+    var meditateOnNodeSel = this.svgNodeG.selectAll('svg.node-container').data([meditateOnWordNode], WORD_NODE_JOIN),
+        allMottoNodesSel = this.svgNodeG.selectAll('svg.node-container').data(motto.wordNodes, WORD_NODE_JOIN),
         allLinksSel = this.svgLinkG.selectAll('line.link').data(mottoLinks, LINK_JOIN);
 
     meditateOnNodeSel.style('display', 'inline').style('opacity', 1); // incase it's a new node and set to 0
+    meditateOnNodeSel = meditateOnNodeSel.selectAll('circle.node');
 
     // Clear previous selections if they still exist
     if (this._lastNewMottoController) {
@@ -268,12 +299,24 @@ return Backbone.View.extend({
       };
 
       this.focusAllMottoNodes = function(duration) {
+        // Hide any size halos for those nodes which have reached max size
+        allMottoNodesSel.selectAll('circle.node-halo')
+        .style('display', function(wn) {
+          if (wn.mottos.length === Object.keys(wn.shownMottos).length) {
+            return 'none';
+          } else {
+            return 'inline';
+          }
+        });
+
         allMottoNodesSel
         .style('display', 'inline') // new nodes started off hidden so you couldn't click on them
         .transition().duration(duration || 800)
-        .attr('r', function(d) { return self.nodeSizeScale( Object.keys(d.shownMottos).length ); })
-        .style('fill', COLOR_FOCUSED_NODE)
-        .style('opacity', 1);
+          .style('opacity', 1)
+
+        .selectAll('circle.node')
+          .attr('r', function(d) { return self.nodeSizeScale( Object.keys(d.shownMottos).length ); })
+          .style('fill', COLOR_FOCUSED_NODE);
         meditateOnNodeSel.transition().style('fill', COLOR.MEDITATE_ON);
         allLinksSel.transition().duration(duration || 800).style('stroke', STYLE_FOCUSED_LINK_STROKE);
         return this;
@@ -285,6 +328,8 @@ return Backbone.View.extend({
         .interrupt()
         .style('display', 'inline')
         .style('opacity', 1)
+
+        .selectAll('circle.node')
         .attr('r', function(d) { return self.nodeSizeScale( Object.keys(d.shownMottos).length ); });
         return this;
       };
@@ -311,7 +356,11 @@ return Backbone.View.extend({
       };
 
       this.unfocusAll = function(duration, _skipUnlock) {
-        allMottoNodesSel.transition().duration(duration || 800).style('fill', COLOR_NODE);
+        allMottoNodesSel
+        .transition().duration(duration || 800)
+        .selectAll('circle.node')
+        .style('fill', COLOR_NODE);
+
         allLinksSel.transition().duration(duration || 800).style('stroke', STYLE_LINK_STROKE);
 
         return this;
@@ -322,7 +371,7 @@ return Backbone.View.extend({
   },
 
   _forceLayoutTick: function() {
-    // _linkSel and _nodeSel are link and node selections adjusted every time you add a new motto
+    // _linkSel and _nodeContainerSel are link and node selections adjusted every time you add a new motto
     // Update them to new positions determined by the force layout
 
     this._linkSel
@@ -331,9 +380,9 @@ return Backbone.View.extend({
     .attr("x2", function(d) { return d.target.x; })
     .attr("y2", function(d) { return d.target.y; });
 
-    this._nodeSel
-    .attr("cx", function(d) { return d.x; })
-    .attr("cy", function(d) { return d.y; });
+    this._nodeContainerSel
+    .attr("x", function(d) { return d.x - MAX_NODE_R - 2; })
+    .attr("y", function(d) { return d.y - MAX_NODE_R - 2; });
 
     // D3 allows only a single event listener... let anyone hear the tick-tock of my clock
     this.trigger('tick', this, this.force);
