@@ -26,6 +26,9 @@ require.config({
   },
 
   shim: {
+    bootstrap: {
+      deps: ['jquery']
+    },
     d3: {
       exports: "d3"
     }
