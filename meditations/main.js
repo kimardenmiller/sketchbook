@@ -30,7 +30,8 @@ require(
 
     $('.container').show();
 
-    $('#footer .byline').css('color', COLOR.NO_MORE);
+    $('#footer .title').css('color', COLOR.MORE);
+    $('#footer .byline').css('color', COLOR.MOTTO);
     $('#footer').removeClass('hide');
 
     promiseWordNodes
@@ -57,17 +58,6 @@ require(
       });
       window.mottos = mottos;
       window.wordNodes = wordNodes;
-
-      console.log("Force view ready.  Try: c = forceView.addMotto(mottos[4], mottos[4].wordNodes[0])");
-      console.log("then: c.focusMeditateOn()");
-      console.log("then: c.focusAllMottoNodes().releaseNewNodes()");
-      console.log("then: c = forceView.addMotto(mottos[5], mottos[5].wordNodes[0])");
-
-
-
-      forceView.on("highlightedMotto", function(fv, motto, wordNode) {
-        console.log("Highlighted a motto!", motto, wordNode);
-      });
 
     })
     .fail(function() {
