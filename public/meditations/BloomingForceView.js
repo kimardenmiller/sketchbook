@@ -260,6 +260,10 @@ return Backbone.View.extend({
         meditateOnNodeSel.transition().duration(duration || 800)
         .attr('r', function(d) { return self.nodeSizeScale( Object.keys(d.shownMottos).length ); })
         .style('fill', COLOR_FOCUSED_NODE);
+
+        self._blockHover = false;
+        self.svgNodeG.classed('locked', false);
+
         return this;
       };
 
@@ -290,14 +294,6 @@ return Backbone.View.extend({
         newNodes.forEach(function(wn) { wn.fixed = false; });
         meditateOnWordNode.fixed = true;
         self.force.start();
-
-        // let things wiggle a bit more before allowing new hovers
-        if (!_skipUnlock) {
-          setTimeout(function() {
-            self._blockHover = false;
-            self.svgNodeG.classed('locked', false);
-          }, 500);
-        }
 
         return this;
       };
