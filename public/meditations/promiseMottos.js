@@ -2,7 +2,7 @@ define(["jquery", "d3"], function($, d3) {
 
   var promiseData = $.Deferred();
 
-  d3.csv('./colleges_and_motos.csv',
+  d3.csv('./colleges_and_mottos.csv',
     function(r) {
       // keys are 'university', 'motto', 'language'
       return r;
