@@ -22,7 +22,7 @@ require.config({
     "d3": "/lib-user/d3.v3.3.2.min",
     "bootstrap": "/lib-user/bootstrap_232/js/bootstrap.min",
     "tpl": "/lib-user/tpl",
-    "lodash": "/lib-user/lod_ash.2.4.1.min",
+    "lodash": "/lib-user/lodash.2.4.1.min",
     "highcharts": "/lib-user/highcharts-all"
   },
 
