@@ -51,6 +51,9 @@ require(["/sketchbook_config.js"], function() {
         views.forEach(function(v) {
           v.highlightComponent(component);
         });
+        if (ga) {
+          ga('send', 'event','oakland-mayor-summary', 'mouseover info paragraph component', component);
+        }
       });
       $('.highlight').on('mouseout', function(e) {
         views.forEach(function(v) {

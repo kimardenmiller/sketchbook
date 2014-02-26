@@ -36,7 +36,8 @@ define(["jquery", "backbone", "highcharts", "oakland-mayor-summary/config"], fun
     },
 
     render: function() {
-      var components = this.options.data.data;
+      var components = this.options.data.data,
+          candidateName = this.options.data.candidate;
 
       var waterfallData = [
         // Everyone started with 0, don't show
@@ -151,6 +152,21 @@ define(["jquery", "backbone", "highcharts", "oakland-mayor-summary/config"], fun
 
         tooltip: {
           pointFormat: '<b>${point.y:,.2f}</b>'
+        },
+        plotOptions: {
+          waterfall: {
+            point: {
+              events: {
+                mouseOver: function(e) {
+                  if (window.ga) {
+                    window.ga('send', 'event', 'oakland-mayor-summary', 'mouseover tooltip', e.target.name);
+                    window.ga('send', 'event', 'oakland-mayor-summary', 'mouseover tooltip for ' + candidateName,
+                              e.target.name);
+                  }
+                }
+              }
+            }
+          }
         },
 
         legend: {

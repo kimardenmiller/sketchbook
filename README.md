@@ -1,14 +1,17 @@
 sketchbook
 ==========
 
-my virtual moleskin: a javascript playground
+my virtual moleskin: a javascript sketchbook
 
 Sketches
 ==========
-- plot/
-    - Sept 2013: Attempt at reusable D3 plot areas
-- oscillator/
-    - Nov 2013: Experiments visualizing oscillator equations
+- [meditations/](http://sketchbook.onafloatingrock.com/meditations)
+    - An experiment in adding interactivity and build-up to the standard D3 force layout.  Why does every D3 force layout
+      example show a fixed number of nodes?  A network should be revealed as it explored, and here we meditate on phrases
+      as our interconnected network of hopes and ideals is revealed.
+- [oakland-mayor-summary/](http://sketchbook.onafloatingrock.com/oakland-mayor-summary)
+    - A hackathon project from Oakland Data Day on visualizing campaign finance public records to provide an empirical,
+      data driven alternative perspective on campaigns' structure, priorities, and promises.
 
 
 ==========
@@ -30,8 +33,8 @@ To setup the sketchbook:
 
 Released under the GPL v3 license.
 
-    dlopuch/sketchbook: A collection of Javascript and Web sketches
-    Copyright (C) 2013 Dan Lopuch <dlopuch@gmail>
+    dlopuch/sketchbook: a javascript playground
+    Copyright (C) 2014 Dan Lopuch <dlopuch@gmail>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
