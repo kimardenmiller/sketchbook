@@ -95,7 +95,7 @@ define(["jquery", "backbone", "highcharts", "oakland-mayor-summary/config"], fun
         },
 
         {
-          name: 'Effective Balance',
+          name: 'Campaign Value',
           isSum: true,
           color: Highcharts.getOptions().colors[1]
         },
