@@ -46,10 +46,10 @@ return Backbone.View.extend({
     // "this" on the callbacks will reference this Backbone View (and its relevant state properties), so to force this,
     // we need to bind each callback to the Backbone instance.
     this._tick = this._tick.bind(this);
-  },
+    this._colorNode = this._colorNode.bind(this);
+    this._setSelectionRadius = this._setSelectionRadius.bind(this);
 
-  _tick: function() {
-
+    this.render();
   },
 
   render: function() {
@@ -64,34 +64,31 @@ return Backbone.View.extend({
       links = nodesAndLinks.links,
       self = this;
 
-    // Lock the first node in the center... makes it a bit more smooth, but loses some of its fun wiggliness.
-    nodes[0].fixed = this.options.fixedRoot ? true : false;
-
 
     // Update the nodes…
     this._nodes = this.visSvg.selectAll("circle.node")
-      .data(nodes, function(d) { return d.id; })
-      .style("fill", this._colorNode);
+    .data(nodes, function(d) { return d.id; })
+    .style("fill", this._colorNode);
 
     // Enter any new nodes.
     this._nodes.enter().append("svg:circle")
-      .each(function(d) {
-        // Init each new node to the location of it's parent so nodes swing out from the parent position
-        if (d.parent) {
-          d.x = d.px = d.parent.x;
-          d.y = d.py = d.parent.y;
-        } else {
-          d.x = (self.options.w || DEFAULT_W) / 2;
-          d.y = (self.options.h || DEFAULT_H) * 5/6;
-        }
-      })
-      .attr("class", "node")
-      .attr("cx", function(d) { return d.x; })
-      .attr("cy", function(d) { return d.y; })
-      .call(this._setSelectionRadius)
-      .style("fill", this._colorNode)
-      .on("click", this._clickNodeHandler)
-      .call(this.force.drag);
+    .each(function(d) {
+      // Init each new node to the location of it's parent so nodes swing out from the parent position
+      if (d.parent) {
+        d.x = d.px = d.parent.x;
+        d.y = d.py = d.parent.y;
+      } else {
+        d.x = d.px = (self.options.w || DEFAULT_W) / 2;
+        d.y = d.py = (self.options.h || DEFAULT_H) * 5/6;
+      }
+    })
+    .attr("class", "node")
+    .attr("cx", function(d) { return d.x; })
+    .attr("cy", function(d) { return d.y; })
+    .call(this._setSelectionRadius)
+    .style("fill", this._colorNode)
+    .on("click", this._clickNodeHandler)
+    .call(this.force.drag);
 
     // Exit any old nodes.
     this._nodes.exit().remove();
@@ -99,25 +96,52 @@ return Backbone.View.extend({
 
     // Update the links…
     this._links = this.visSvg.selectAll("line.link")
-      .data(links, function(d) { return d.target.id + "__" + d.source.id; });
+      .data(links, function(l) { return l.id; });
 
     // Enter any new links.
     this._links.enter().insert("svg:line", ".node")
-      .attr("class", "link")
-      .attr("x1", function(d) { return d.source.x; })
-      .attr("y1", function(d) { return d.source.y; })
-      .attr("x2", function(d) { return d.target.x; })
-      .attr("y2", function(d) { return d.target.y; });
+    .attr("class", "link")
+    .attr("x1", function(d) { return d.source.x; })
+    .attr("y1", function(d) { return d.source.y; })
+    .attr("x2", function(d) { return d.target.x; })
+    .attr("y2", function(d) { return d.target.y; });
 
     // Exit any old links.
     this._links.exit().remove();
 
     // Restart the force layout.
     this.force
-      .nodes(nodes)
-      .links(links)
-      .linkDistance(this.options.measures[this.options.distanceMeasure].distanceScale)
-      .start();
+    .nodes(nodes)
+    .links(links)
+    // .linkDistance(!this.options.distanceMeasure ?
+                    // undefined :
+                    // this.options.measures[this.options.distanceMeasure].distanceScale)
+    .start();
+  },
+
+  _tick: function() {
+    this._links
+    .attr("x1", function(d) { return d.source.x; })
+    .attr("y1", function(d) { return d.source.y; })
+    .attr("x2", function(d) { return d.target.x; })
+    .attr("y2", function(d) { return d.target.y; });
+
+    this._nodes
+    .attr("cx", function(d) { return d.x; })
+    .attr("cy", function(d) { return d.y; });
+  },
+
+  _setSelectionRadius: function(selection) {
+    var self = this;
+    selection.attr("r", function(d) {
+      if (!self.options.radiusMeasure) return 10;
+
+      return self.options.measures[self.options.radiusMeasure].radiusScale(
+               self.options.measures[self.options.radiusMeasure].accessor(d));
+    });
+  },
+  _colorNode: function(d) {
+    return "steelblue";
   }
 });
 });

@@ -43,6 +43,7 @@ define(['lodash', 'fireflies/model/AuthorNode'], function(_, AuthorNode) {
 
           timestamp: comment.created_utc,
         };
+        comment.link = link;
         authorDataByAuthor[comment.author].links.push(link);
         allLinks.push(link);
       }

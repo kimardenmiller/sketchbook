@@ -20,7 +20,7 @@ define(['jquery', 'lodash'], function($, _) {
     if (!Array.isArray(attrs.links)) // note links CAN be length 0: author is root author and never replied to anyone
       throw new Error("Error creating AuthorNode: invalid links specified");
 
-    this.author = attrs.author;
+    this.id = this.author = attrs.author;
     this.links = attrs.links;
 
     // Order all comments by time created

@@ -13,6 +13,31 @@
   <title>Fireflies: A Dance of Discourse</title>
 
   <style type="text/css">
+
+circle.node {
+  cursor: pointer;
+  stroke-width: 1.5px;
+}
+
+
+circle.node.highlight,
+circle.node.highlight.semihighlight { /* highlight "takes priority" over semihighlight */
+  stroke: red;
+  stroke-width: 1.5px;
+}
+
+circle.node.semihighlight {
+  stroke: red;
+  stroke-width: 1px;
+  stroke-opacity: .75;
+}
+
+line.link {
+  fill: none;
+  stroke: #ddd; /*#9ecae1;*/
+  stroke-width: 1.5px;
+}
+
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }

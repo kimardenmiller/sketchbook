@@ -18,12 +18,14 @@ require(["/sketchbook_config.js"], function() { // load master configuration
         window.authorNodesEtc = treeToAuthorNodes(rootComment);
         console.log('authorNodesEtc:', authorNodesEtc);
 
-        window.authorNodeEmitter = new AuthorNodeEmitter();
+        window.authorNodeEmitter = new AuthorNodeEmitter(authorNodesEtc);
 
         window.forceView = new ForceView({
           el: '#force_view',
           model: authorNodeEmitter
         });
+
+        console.log("Ready to go.  Execute: try{ forceView.update() } catch(e) {console.log(e.stack); }");
 
       })
       .fail(function() {

@@ -4,18 +4,21 @@
  *
  * Abstract event emitter class that emits nodes to be fed into the ForceView.
  *
- * (Basically a model for the force view, but without all the REST-ful baggage that a Backbone Model carries.)
+ * A ForceLayoutNodeEmitter has Backbone.Events functions mixed in -- listenTo, trigger, etc.
  *
- * A ForceLayoutNodeEmitter has Backbone.Events functions mixed in.
- * Define subclasses with the usual Backbone extend() function.
- *
- * Constructor:
+ * Define subclasses with the usual Backbone extend() pattern, ie:
+ *   var MyNodeEmitter = ForceLayoutNodeEmitter.extend({
+ *     initialize: function(attrs) { ... },
+ *     foo: function() {...},
+ *     ...
+ *   })
  *
  */
 define(["jquery", "d3", "lodash", "backbone"],
 function($, d3, _, Backbone) {
 
   function ForceLayoutNodeEmitter(attrs) {
+    this.attrs = attrs;
     this.initialize(attrs);
   };
 
@@ -27,6 +30,11 @@ function($, d3, _, Backbone) {
       // nothing to do in abstract base class.
     },
 
+    /**
+     * @returns {Object} current nodes and links, however 'current' is defined.  Object is:
+     *   nodes: {Array(Object)} List of nodes
+     *   links: {Array(Object)} List of links, that is Objects with a .source and .target pointing to some node
+     */
     getActiveNodesAndLinks: function() {
       throw new Error("Abstract ForceLayoutNodeEmitter: getActiveNodesAndLinks not implemented");
     }
