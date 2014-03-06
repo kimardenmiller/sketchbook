@@ -1,7 +1,7 @@
 /**
  * Parses a comment tree to make a list of AuthorNodes
  */
-define(['lodash', 'fireflies/AuthorNode'], function(_, AuthorNode) {
+define(['lodash', 'fireflies/model/AuthorNode'], function(_, AuthorNode) {
 
   return function(rootNode) {
     var authorDataByAuthor = {},
