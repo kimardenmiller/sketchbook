@@ -32,6 +32,8 @@ define(['lodash', 'fireflies/model/AuthorNode'], function(_, AuthorNode) {
       // Create links between authors, where every link is a reply to someone ('target' is parent author)
       if (comment.parent) {
         var link = {
+          id: comment.author + "__" + comment.parent.author + "__" + comment.created_utc,
+
           source: undefined, // the AuthorNode who made the comment (filled in below, after AuthorNodes are made)
           target: undefined, // the AuthorNode who this comment was a reply to
 
