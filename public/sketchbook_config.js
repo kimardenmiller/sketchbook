@@ -23,7 +23,8 @@ require.config({
     "bootstrap": "/lib-user/bootstrap_232/js/bootstrap.min",
     "tpl": "/lib-user/tpl",
     "lodash": "/lib-user/lodash.2.4.1.min",
-    "highcharts": "/lib-user/highcharts-all"
+    "highcharts": "/lib-user/highcharts-all",
+    "jquery-slider": "/lib-user/jquery-ui-1.10.4.slider"
   },
 
   shim: {
@@ -36,6 +37,10 @@ require.config({
     highcharts: {
       deps: ['jquery'],
       exports: "Highcharts"
+    },
+    "jquery-slider": {
+      deps: ['jquery'],
+      exports: "$"
     }
   }
 

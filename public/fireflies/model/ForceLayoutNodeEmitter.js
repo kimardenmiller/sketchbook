@@ -13,6 +13,9 @@
  *     ...
  *   })
  *
+ * Events Emitted:
+ *   "newActiveNodesAndLinks" (this, nodesAndLinks): Emitted when there is a new set of active nodes to be displayed.
+ *     nodesAndLinks is an {Object} with all .nodes and .links attrs, like getActiveNodesAndLinks().
  */
 define(["jquery", "d3", "lodash", "backbone"],
 function($, d3, _, Backbone) {

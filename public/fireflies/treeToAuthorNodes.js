@@ -57,7 +57,7 @@ define(['lodash', 'fireflies/model/AuthorNode'], function(_, AuthorNode) {
       authorNodes.push(authorNode);
       authorNodesByAuthor[a] = authorNode;
     }
-    authorNodes = _.sortBy(authorNodes, authorNodes.firstCommentTs);
+    authorNodes = _.sortBy(authorNodes, 'firstCommentTs');
 
 
     // Fill in the links' .source and .target with the appropriate AuthorNodes

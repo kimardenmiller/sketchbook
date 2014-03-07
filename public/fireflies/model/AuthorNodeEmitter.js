@@ -40,11 +40,11 @@ function($, d3, _, Backbone, ForceLayoutNodeEmitter) {
         }
       }
 
-      this.currentAuthorI = 0;
+      this._lastActiveAuthorI = 0;
     },
 
     getActiveNodesAndLinks: function() {
-      var nodes = this.allAuthorNodes.slice(0, this.currentAuthorI++),
+      var nodes = this.allAuthorNodes.slice(0, this._lastActiveAuthorI),
           nodesIdx = {};
       nodes.forEach(function(an) {
         nodesIdx[an.id] = true;
@@ -58,6 +58,9 @@ function($, d3, _, Backbone, ForceLayoutNodeEmitter) {
         });
       });
 
+      console.log("Showing " + nodes.length + " of " + this.allAuthorNodes.length + " authors (" +
+                  Math.round(nodes.length / this.allAuthorNodes.length * 100) + "%)");
+
       // Self links wreak havoc on the force view... get rid of them.
       links = links.filter(filterOutSelfLinks);
 
@@ -65,6 +68,34 @@ function($, d3, _, Backbone, ForceLayoutNodeEmitter) {
         nodes: nodes,
         links: links
       };
+    },
+
+    emitAuthorsUpToTs: function(ts) {
+      if (!ts) ts = 0;
+
+      for (var i=0; i<this.allAuthorNodes.length; i++) {
+        if (ts < this.allAuthorNodes[i].firstCommentTs) {
+          break;
+        }
+      }
+
+      this._lastActiveAuthorI = i;
+
+      this.trigger('newActiveNodesAndLinks', this, this.getActiveNodesAndLinks());
+    },
+
+    /**
+     * Returns the timestamp of the earliest comment made by any author
+     */
+    getMinAuthorTs: function() {
+      return this.allAuthorNodes[0].firstCommentTs;
+    },
+
+    /**
+     * Returns the timestamp of the last comment made by any author
+     */
+    getMaxAuthorTs: function() {
+      return d3.max(this.allAuthorNodes, function(an) {return an.lastCommentTs;});
     }
   });
 });

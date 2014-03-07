@@ -27,17 +27,21 @@ return Backbone.View.extend({
     if (!this.model)
       throw new Error("ForceLayoutNodeEmitter required!");
 
+    this.listenTo(this.model, "newActiveNodesAndLinks", this.onNewActiveNodesAndLinks);
+
     this.id = "_fv" + FORCE_VIEW_I++;
+
+    opts.w = opts.w || this.$el.width()  || DEFAULT_W;
+    opts.h = opts.h || this.$el.height() || DEFAULT_H;
 
 
     this.visSvg = d3.select(this.el).append("svg:svg")
-      .attr("width",  opts.w || this.$el.width()  || DEFAULT_W)
-      .attr("height", opts.h || this.$el.height() || DEFAULT_H);
+      .attr("width",  opts.w)
+      .attr("height", opts.h);
 
     this.force = d3.layout.force()
       .on("tick", this._tick.bind(this))
-      .size([opts.w || this.$el.width()  || DEFAULT_W,
-             opts.h || this.$el.height() || DEFAULT_H]);
+      .size([opts.w, opts.h]);
 
 
     // ------ Instance-bound D3 callback functions -----
@@ -57,12 +61,16 @@ return Backbone.View.extend({
     return this;
   },
 
-  update: function() {
-    var
-      nodesAndLinks = this.model.getActiveNodesAndLinks(),
-      nodes = nodesAndLinks.nodes,
-      links = nodesAndLinks.links,
-      self = this;
+  onNewActiveNodesAndLinks: function(emitter, nodesAndLinks) {
+    this.update(nodesAndLinks);
+  },
+
+  update: function(nodesAndLinks) {
+    nodesAndLinks = nodesAndLinks || this.model.getActiveNodesAndLinks();
+
+    var nodes = nodesAndLinks.nodes,
+        links = nodesAndLinks.links,
+        self = this;
 
 
     // Update the nodes…
@@ -78,8 +86,8 @@ return Backbone.View.extend({
         d.x = d.px = d.parent.x;
         d.y = d.py = d.parent.y;
       } else {
-        d.x = d.px = (self.options.w || DEFAULT_W) / 2;
-        d.y = d.py = (self.options.h || DEFAULT_H) * 5/6;
+        d.x = d.px = (self.options.w) / 2;
+        d.y = d.py = (self.options.h) / 2;
       }
     })
     .attr("class", "node")
@@ -119,6 +127,7 @@ return Backbone.View.extend({
     .start();
   },
 
+  // Force view tick: update positions of all the DOM elements per layout's calculations
   _tick: function() {
     this._links
     .attr("x1", function(d) { return d.source.x; })
