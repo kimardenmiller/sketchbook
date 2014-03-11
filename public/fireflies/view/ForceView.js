@@ -108,7 +108,8 @@ return Backbone.View.extend({
         fvID = this.id,
         opts = this.options;
 
-    // Update the nodes…
+    // -------------------
+    // Update the nodes...
     this._nodes = this.visSvg.selectAll("circle.node")
     .data(nodes, DATA_JOIN_ON_ID)
     .style("fill", this._colorNode);
@@ -126,7 +127,7 @@ return Backbone.View.extend({
     }
 
     // Enter any new nodes.
-    this._nodes.enter().append("svg:circle")
+    var enterNodes = this._nodes.enter().append("svg:circle")
     .each(function(d) {
       // Reserve a namespace on the nodes specific to this forceview
       if (!d[fvID])
@@ -151,6 +152,29 @@ return Backbone.View.extend({
     .style("fill", this._colorNode)
     .on("click", this._clickNodeHandler)
     .call(this.force.drag);
+
+
+    // -------------------
+    // Update the links...
+    this._links = this.visSvg.selectAll("line.link")
+      .data(links, DATA_JOIN_ON_ID);
+
+    // Enter any new links.
+    var enterLinks = this._links.enter().insert("svg:line", ".node")
+    .attr("class", "link")
+    .attr("x1", LINK_SOURCE_X)
+    .attr("y1", LINK_SOURCE_Y)
+    .attr("x2", LINK_TARGET_X)
+    .attr("y2", LINK_TARGET_Y);
+
+
+    // ------------------
+    // Trigger event with node and links selections (before we exit)
+    this.trigger('updateNodesAndLinks', this, enterNodes, this._nodes, enterLinks, this._links);
+
+
+    // ------------------
+    // Exits
 
     // Exit any old nodes.
     if (!opts.animateExit) {
@@ -177,19 +201,6 @@ return Backbone.View.extend({
       })
       .remove(); // remove the els when transition is done
     }
-
-
-    // Update the links…
-    this._links = this.visSvg.selectAll("line.link")
-      .data(links, DATA_JOIN_ON_ID);
-
-    // Enter any new links.
-    this._links.enter().insert("svg:line", ".node")
-    .attr("class", "link")
-    .attr("x1", LINK_SOURCE_X)
-    .attr("y1", LINK_SOURCE_Y)
-    .attr("x2", LINK_TARGET_X)
-    .attr("y2", LINK_TARGET_Y);
 
     // Exit any old links.
     this._links.exit().remove();

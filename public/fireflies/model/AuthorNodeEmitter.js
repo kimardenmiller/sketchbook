@@ -24,9 +24,16 @@ function($, d3, _, Backbone, ForceLayoutNodeEmitter) {
         throw new Error("authorNodes required!");
       this.allAuthorNodes = attrs.authorNodes;
 
+      // links are comments: a link is made with a comment from source:creating author to target:parent comment's author
+      // We assume links is sorted by .timestamp ascending (ie oldest first)
       if (!attrs.links || !Array.isArray(attrs.links))
         throw new Error("links required!");
       this.allLinks = attrs.links;
+
+      // TODO: redundant with allLinks?
+      // if (!attrs.allComments || !Array.isArray(attrs.allComments))
+        // throw new Error('comments required!');
+      // this.allComments = attrs.allComments;
 
       for (var l=0; l<attrs.links.length; l++) {
         if (!attrs.links[l].source || !attrs.links[l].target)
@@ -44,44 +51,30 @@ function($, d3, _, Backbone, ForceLayoutNodeEmitter) {
     },
 
     getActiveNodesAndLinks: function() {
-      var nodes = this.allAuthorNodes.slice(0, this._lastActiveAuthorI),
-          nodesIdx = {};
-      nodes.forEach(function(an) {
-        nodesIdx[an.id] = true;
-      });
-      var links = [];
-      nodes.forEach(function(an) {
-        an.commentNodes.forEach(function(comment) {
-          if (comment.link && nodesIdx[ comment.link.target.id ]) {
-            links.push(comment.link);
-          }
-        });
-      });
-
-      console.log("Showing " + nodes.length + " of " + this.allAuthorNodes.length + " authors (" +
-                  Math.round(nodes.length / this.allAuthorNodes.length * 100) + "%)");
-
-      // Self links wreak havoc on the force view... get rid of them.
-      links = links.filter(filterOutSelfLinks);
-
-      return {
-        nodes: _.clone(this.allAuthorNodes),
-        links: links
-      };
+     return {
+       nodes: _.clone(this.allAuthorNodes),
+       links: []
+     };
     },
 
     emitAuthorsUpToTs: function(ts) {
       if (!ts) ts = 0;
 
-      for (var i=0; i<this.allAuthorNodes.length; i++) {
-        if (ts < this.allAuthorNodes[i].firstCommentTs) {
+      for (var i=0; i<this.allLinks.length; i++) {
+        if (ts < this.allLinks[i].timestamp) {
           break;
         }
       }
 
-      this._lastActiveAuthorI = i;
+      this._lastActiveLinkI = i;
 
-      this.trigger('newActiveNodesAndLinks', this, this.getActiveNodesAndLinks());
+      // Self links wreak havoc on the force view... get rid of them.
+      var links = this.allLinks.slice(0, i).filter(filterOutSelfLinks);
+
+      this.trigger('newActiveNodesAndLinks', this, {
+        nodes: _.clone(this.allAuthorNodes),
+        links: links
+      });
     },
 
     /**

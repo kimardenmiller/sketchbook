@@ -6,10 +6,12 @@ define(['lodash', 'fireflies/model/AuthorNode'], function(_, AuthorNode) {
   return function(rootNode) {
     var authorDataByAuthor = {},
         allLinks = [],
-        toVisit = [rootNode];
+        toVisit = [rootNode],
+        allComments = [];
 
     while (toVisit.length) {
       var comment = toVisit.pop();
+      allComments.push(comment);
 
       comment.children.forEach(function(c) {
         toVisit.push(c);
@@ -69,11 +71,13 @@ define(['lodash', 'fireflies/model/AuthorNode'], function(_, AuthorNode) {
     });
     allLinks = _.sortBy(allLinks, 'timestamp');
 
+    allComments = _.sortBy(allComments, 'created_utc');
 
     return {
       authorNodes: authorNodes,
       links: allLinks,
-      authorDataByAuthor: authorDataByAuthor
+      authorDataByAuthor: authorDataByAuthor,
+      allComments: allComments
     };
   };
 });
