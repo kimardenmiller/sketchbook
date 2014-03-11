@@ -21,6 +21,13 @@ require(["/sketchbook_config.js"], function() { // load master configuration
         window.authorNodesEtc = treeToAuthorNodes(rootComment);
         console.log('authorNodesEtc:', authorNodesEtc);
 
+        // demo cludge: luckysunbunny's comment was created well after all the others.  To avoid unbalanced timeline,
+        // lets just filter out that outlier
+        authorNodesEtc.allComments = authorNodesEtc.allComments.filter(function(d) {return d.author !== 'luckysunbunny';});
+        delete authorNodesEtc.authorDataByAuthor;
+        authorNodesEtc.authorNodes = authorNodesEtc.authorNodes.filter(function(d) {return d.author !== 'luckysunbunny';});
+        authorNodesEtc.links = authorNodesEtc.links.filter(function(d) {return d.sourceAuthor !== 'luckysunbunny';});
+
         window.authorNodeEmitter = new AuthorNodeEmitter(authorNodesEtc);
 
         window.forceView = new ForceView({
