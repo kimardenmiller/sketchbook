@@ -13,6 +13,8 @@
  *   [options.h]: {number} Height of SVG that view draws.  Defaults to element width of 500.
  *   [options.enterAtParent]: {boolean=true} If nodes have a .parent, new ones will enter at the parent's x,y.
  *                            Otherwise, nodes enter in the center of the forceview.
+ *   [options.animateExit]: {Object} Include to animation exitting nodes (falsey to make exitting nodes just disapear)
+ *   [options.animateExit.msToFade]: {number} How many ms to wait before node exits
  *
  * Attributes:
  *   this.visSvg: {d3.selection} the SVG element drawing the force view

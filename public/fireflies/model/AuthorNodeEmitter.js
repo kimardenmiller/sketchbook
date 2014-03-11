@@ -65,7 +65,7 @@ function($, d3, _, Backbone, ForceLayoutNodeEmitter) {
       links = links.filter(filterOutSelfLinks);
 
       return {
-        nodes: nodes,
+        nodes: _.clone(this.allAuthorNodes),
         links: links
       };
     },
