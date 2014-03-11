@@ -15,6 +15,7 @@
  *                            Otherwise, nodes enter in the center of the forceview.
  *   [options.animateExit]: {Object} Include to animation exitting nodes (falsey to make exitting nodes just disapear)
  *   [options.animateExit.msToFade]: {number} How many ms to wait before node exits
+ *   [options.force.charge]: {number | function} pass-through to D3 force layout .charge()
  *
  * Attributes:
  *   this.visSvg: {d3.selection} the SVG element drawing the force view
@@ -69,6 +70,10 @@ return Backbone.View.extend({
       .on("tick", this._tick.bind(this))
       .size([opts.w, opts.h])
       .linkDistance(50);
+
+    if (opts.force && opts.force.charge) {
+      this.force.charge(opts.force.charge);
+    }
 
 
     // ------ Instance-bound D3 callback functions -----
@@ -170,7 +175,7 @@ return Backbone.View.extend({
 
     // ------------------
     // Trigger event with node and links selections (before we exit)
-    this.trigger('updateNodesAndLinks', this, enterNodes, this._nodes, enterLinks, this._links);
+    this.trigger('updateNodesAndLinks', this, enterNodes, this._nodes, enterLinks, this._links, nodesAndLinks);
 
 
     // ------------------

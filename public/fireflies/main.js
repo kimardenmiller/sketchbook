@@ -32,7 +32,12 @@ require(["/sketchbook_config.js"], function() { // load master configuration
 
         window.forceView = new ForceView({
           el: '#force_view',
-          model: authorNodeEmitter
+          model: authorNodeEmitter,
+          force: {
+            charge: function(d) {
+              return d.authorForceViewCharge || -200;
+            }
+          }
         });
 
         window.sliderView = new SliderView({
@@ -44,6 +49,31 @@ require(["/sketchbook_config.js"], function() { // load master configuration
         // experiments in animating
         forceView.on('updateNodesAndLinks', function(fv, enterNodes, nodes, enterLinks, links) {
 
+          var authorsWhoMadeComments = {},
+              authorsInPlay = {};
+
+          enterLinks.each(function(d) {
+            if (d) {
+              authorsWhoMadeComments[ d.sourceAuthor ] = d;
+            }
+          });
+          links.each(function(d) {
+            if (d) {
+              authorsInPlay[ d.sourceAuthor ] = d;
+            }
+          });
+
+          nodes.each(function(d) {
+            if (authorsWhoMadeComments[d.author]) {
+              d.authorForceViewCharge = 1; // light attractor -- fly towards its parent!
+            } else if (authorsInPlay[d.author]) {
+              // Do nothing... when the link transition below finishes, it will put this guy to -30 / light-repulsor
+            } else {
+              d.authorForceViewCharge = -200; // heavy repulsor
+            }
+          });
+
+          // ANIMATE NEW LINKS:
           // All new links: three step animation
           // 1) Initialize new links to red/transparent
           // 2) Transition, each with its staggered delay (but 0 transition length... just want the delay)
@@ -65,7 +95,12 @@ require(["/sketchbook_config.js"], function() { // load master configuration
             d3.select(this)
             .style({opacity: 1})
             .transition()
-            .style({stroke: '#ddd', opacity: 1});
+            .style({stroke: '#ddd', opacity: 1})
+            .transition()
+            .each(function(d) {
+              d.source.authorForceViewCharge = -30;
+              fv.force.start(); // restart force view to make attractor change stick
+            });
           });
         });
       })
