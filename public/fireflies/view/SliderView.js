@@ -20,13 +20,56 @@ var DEFAULT_W = 600,
 return Backbone.View.extend({
   el: "#timeline",
 
+  events: {
+    'click .play': 'play',
+    'click .pause': 'pause'
+  },
+
   initialize: function(opts) {
     if (!opts.authorNodeEmitter)
       throw new Error("AuthorNodeEmitter needed!");
 
+    this.max = this.options.authorNodeEmitter.getMaxAuthorTs();
+    this.min = this.options.authorNodeEmitter.getMinAuthorTs();
+
     this.render();
 
-    this.$("#timeline_slider").on('slide', _.debounce(this.onNewSliderValue.bind(this), 100));
+    var onNewSliderValue = _.debounce(this.onNewSliderValue.bind(this), 100);
+    this.$("#timeline_slider").on('slide', onNewSliderValue); // mouse movements
+    this.$("#timeline_slider").on('slidechange', onNewSliderValue); // mouseup, programatic value (ie play/pause)
+  },
+
+  play: function(e) {
+    if (this.timer) {
+      return this.pause(e);
+    }
+
+    var $sl = $("#timeline_slider"),
+        self = this,
+        curVal,
+        dir = 1;
+
+    this.timer = setInterval(function() {
+      curVal = $sl.slider('value');
+      if (curVal + 60000 > self.max)
+        dir = -6;
+      if (curVal - 60000 < self.min)
+        dir = 1;
+      $sl.slider('value', curVal + dir * 60000);
+    }, 120); // must be larger than debounce!
+
+    e.preventDefault();
+  },
+
+  pause: function(e) {
+    if (!this.timer) {
+      return this.play(e);
+    }
+
+    clearInterval(this.timer);
+    delete this.timer;
+
+    e.preventDefault();
   },
 
   onNewSliderValue: function(e, ui) {
@@ -36,9 +79,9 @@ return Backbone.View.extend({
 
   render: function() {
     this.$("#timeline_slider").slider({
-      animate: 'slow',
-      max: this.options.authorNodeEmitter.getMaxAuthorTs(),
-      min: this.options.authorNodeEmitter.getMinAuthorTs(),
+      animate: 'fast',
+      max: this.max,
+      min: this.min,
       step: 2 * 60 * 1000
     });
     return this;
