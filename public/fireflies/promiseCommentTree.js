@@ -4,7 +4,8 @@ define(["jquery", 'underscore'], function($, _) {
 
   // TODO: Shim to load data from pre-built JSON.  Later use the RedditParser to get dynamic comment trees.
   //       This JSON file is the transformed output from RedditParser, except for the .parent circular reference.
-  $.getJSON('/comment_tree_parsers/example_data/dataisbeautiful_1ty2i3.json')
+  //$.getJSON('/comment_tree_parsers/example_data/dataisbeautiful_1ty2i3.json')
+  $.getJSON('/comment_tree_parsers/example_data/science_2058f5.json')
   .done(function(rootNode) {
     // Crawl through the tree and set the 'parent' links.  Normally RedditParser does this, but we dumped the data to
     // JSON and JSON can't store circular references

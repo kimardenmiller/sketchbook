@@ -15,6 +15,7 @@ require(["/sketchbook_config.js"], function() { // load master configuration
              ForceView,
 
              SliderView) {
+
       promiseCommentTree.done(function(rootComment) {
         window.rootComment = rootComment;
         console.log('rootComment:', rootComment);

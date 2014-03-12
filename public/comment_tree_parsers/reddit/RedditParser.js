@@ -45,7 +45,12 @@ define(["jquery"], function($) {
     node.created_utc *= 1000;
   };
 
-  return function(redditUrl) {
+  /**
+   * Converts a redditURL to a JSON comment tree
+   * @param {string} redditUrl link to comment thread, like http://www.reddit.com/r/science/comments/2058f5
+   * @param {boolean} [noCircular] True to avoid setting circular references, so you can output this to JSON
+   */
+  return function(redditUrl, noCircular) {
     var deferred = $.Deferred();
 
     if (!redditUrl || redditUrl.indexOf("comments") === -1) {
@@ -58,7 +63,7 @@ define(["jquery"], function($) {
       redditUrl = redditUrl.substring(0, redditUrl.length - 1);
 
     printMessage("Retrieving comment tree...");
-    $.getJSON('http://' + redditUrl + ".json?jsonp=?")
+    $.getJSON((redditUrl.search('http') > -1 ? '' : 'http://') + redditUrl + ".json?jsonp=?")
     .error(function(err) {
       deferred.reject(new Error("Error retreiving reddit URL comments: " + err));
     })
@@ -95,12 +100,12 @@ define(["jquery"], function($) {
       data[1].data.children.forEach(function(child, i) {
         if (child.kind === "t1") {
           root.children.push(child.data);
-          normalizeNode(child.data, root);
+          normalizeNode(child.data, noCircular ? undefined : root);
           toVisit.push(child);
         } else {
           // If it's not a t1 / comment, it's something that needs to be asynchronously retrieved (probably a "more")
           // Add it to the jobQueue, but inject the parent reference so the ultimate node tree can be built properly.
-          child.parent = root;
+          child.parent = noCircular ? undefined : root;
           jobQueue.push(child);
         }
       });
@@ -126,10 +131,10 @@ define(["jquery"], function($) {
             node.data.replies.data.children.forEach(function(child) {
               if (child.kind === "t1") {
                 node.data.children.push(child.data);
-                normalizeNode(child.data, node.data);
+                normalizeNode(child.data, noCircular ? undefined : node.data);
                 toVisit.push(child);
               } else {
-                child.parent = node.data;
+                child.parent = noCircular ? undefined : node.data;
                 jobQueue.push(child);
               }
             });
