@@ -4,13 +4,14 @@ require(["/sketchbook_config.js"], function() { // load master configuration
   require(
     ['jquery', 'lodash',
      'fireflies/promiseCommentTree',
+     'fireflies/preparseTree',
      'fireflies/treeToAuthorNodes',
 
      'fireflies/model/AuthorNodeEmitter',
      'fireflies/view/ForceView',
      'fireflies/view/SliderView'
     ],
-    function($, _, promiseCommentTree, treeToAuthorNodes,
+    function($, _, promiseCommentTree, preparseTree, treeToAuthorNodes,
              AuthorNodeEmitter,
              ForceView,
 
@@ -19,6 +20,7 @@ require(["/sketchbook_config.js"], function() { // load master configuration
       promiseCommentTree.done(function(rootComment) {
         window.rootComment = rootComment;
         console.log('rootComment:', rootComment);
+        preparseTree(rootComment);
         window.authorNodesEtc = treeToAuthorNodes(rootComment);
         console.log('authorNodesEtc:', authorNodesEtc);
 
@@ -29,7 +31,11 @@ require(["/sketchbook_config.js"], function() { // load master configuration
         authorNodesEtc.authorNodes = authorNodesEtc.authorNodes.filter(function(d) {return d.author !== 'luckysunbunny';});
         authorNodesEtc.links = authorNodesEtc.links.filter(function(d) {return d.sourceAuthor !== 'luckysunbunny';});
 
-        window.authorNodeEmitter = new AuthorNodeEmitter(authorNodesEtc);
+        window.authorNodeEmitter = new AuthorNodeEmitter(
+          _.merge({
+            linkWindowPercentage: 0.01
+          }, authorNodesEtc)
+        );
 
         window.forceView = new ForceView({
           el: '#force_view',

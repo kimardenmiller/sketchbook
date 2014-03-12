@@ -4,6 +4,17 @@
  *
  * A {ForceLayoutNodeEmitter} for {AuthorNode}'s
  *
+ * Options passed to constructor:
+ *   authorNodes: {Array(AuthorNode)} All author nodes, sorted by firstCommentTs
+ *   links: {Array(Object)} List of links (comments) between AuthorNodes (.source and .target), sorted by timestamp
+ *   allComments: {Array(Object)} List of comments, sorted by timestamp (creation date)
+ *   [linkWindowPercentage]: {number} Value between 0 and 1.  Let t be the time between the first and last comment.
+ *                                    Links will be emitted if the last comment in their branch was created within
+ *                                    t*window ms of the updated time.  Recommend 0.01-0.05 for dense conversations.
+ *   [linkWindowValue]: {number} Links will be emitted if the last comment in their branch was created within
+ *                               linkWindowValue ms of the updated time.
+ *
+ *
  * Constructor:
  *   attrs.authorNodes: {Array(AuthorNode)} List of AuthorNodes in the force view
  *   attrs.links: {Array(Object)} list of all the links in the force view, where links are d3-force-view objects
@@ -30,10 +41,16 @@ function($, d3, _, Backbone, ForceLayoutNodeEmitter) {
         throw new Error("links required!");
       this.allLinks = attrs.links;
 
-      // TODO: redundant with allLinks?
-      // if (!attrs.allComments || !Array.isArray(attrs.allComments))
-        // throw new Error('comments required!');
-      // this.allComments = attrs.allComments;
+      if (!attrs.allComments || !Array.isArray(attrs.allComments))
+        throw new Error("allComments required!");
+      this.allComments = attrs.allComments;
+
+      if (attrs.linkWindowPercentage) {
+        this.linkWindow = (attrs.allComments[attrs.allComments.length - 1].created_utc -
+                           attrs.allComments[0].created_utc) * attrs.linkWindowPercentage;
+      } else if (attrs.linkWindowValue) {
+        this.linkWindow = attrs.linkWindowValue;
+      }
 
       for (var l=0; l<attrs.links.length; l++) {
         if (!attrs.links[l].source || !attrs.links[l].target)
@@ -48,6 +65,20 @@ function($, d3, _, Backbone, ForceLayoutNodeEmitter) {
       }
 
       this._lastActiveAuthorI = 0;
+    },
+
+    setLinkWindowPercentage: function(linkWindowPercentage) {
+      if (!linkWindowPercentage)
+        this.linkWindow = null;
+
+      this.linkWindow = (this.allComments[this.allComments.length - 1].created_utc -
+                         this.allComments[0].created_utc) * linkWindowPercentage;
+      this.emitAuthorsUpToTs(this._lastUpdatedTs);
+    },
+
+    setLinkWindowValue: function(linkWindowValue) {
+      this.linkWindow = linkWindowValue || null;
+      this.emitAuthorsUpToTs(this._lastUpdatedTs);
     },
 
     getActiveNodesAndLinks: function() {
@@ -66,10 +97,19 @@ function($, d3, _, Backbone, ForceLayoutNodeEmitter) {
         }
       }
 
-      this._lastActiveLinkI = i;
+      this._lastUpdatedTs = ts;
 
-      // Self links wreak havoc on the force view... get rid of them.
-      var links = this.allLinks.slice(0, i).filter(filterOutSelfLinks);
+      var self = this;
+
+      var links = this.allLinks.slice(0, i)
+      .filter(filterOutSelfLinks); // Self links wreak havoc on the force view... get rid of them.
+
+      if (this.linkWindow) {
+        links = links.filter(function(link) {
+          // Include only links done in the last 5 minutes
+          return link.comment.last_branch_ts + self.linkWindow > ts;
+        });
+      }
 
       this.trigger('newActiveNodesAndLinks', this, {
         nodes: _.clone(this.allAuthorNodes),
