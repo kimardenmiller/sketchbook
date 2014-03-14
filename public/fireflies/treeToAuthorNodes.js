@@ -77,6 +77,7 @@ define(['lodash', 'fireflies/model/AuthorNode'], function(_, AuthorNode) {
       authorNodes: authorNodes,
       links: allLinks,
       authorDataByAuthor: authorDataByAuthor,
+      authorNodesByAuthor: authorNodesByAuthor,
       allComments: allComments
     };
   };

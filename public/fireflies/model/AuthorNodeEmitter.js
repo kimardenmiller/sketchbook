@@ -83,7 +83,7 @@ function($, d3, _, Backbone, ForceLayoutNodeEmitter) {
 
     getActiveNodesAndLinks: function() {
      return {
-       nodes: _.clone(this.allAuthorNodes),
+       nodes: [], //_.clone(this.allAuthorNodes),
        links: []
      };
     },
@@ -91,10 +91,16 @@ function($, d3, _, Backbone, ForceLayoutNodeEmitter) {
     emitAuthorsUpToTs: function(ts) {
       if (!ts) ts = 0;
 
+      var authors = {}; // emit only the authors who have participated so far
+
       for (var i=0; i<this.allLinks.length; i++) {
-        if (ts < this.allLinks[i].timestamp) {
+        // links will be the slice of links created before the timestamp.  Break once we pass the timestamp
+        if (this.allLinks[i].timestamp > ts) {
           break;
         }
+
+        // otherwise, index the authors
+        authors[ this.allLinks[i].comment.author ] = this.attrs.authorNodesByAuthor[ this.allLinks[i].comment.author ];
       }
 
       this._lastUpdatedTs = ts;
@@ -112,7 +118,8 @@ function($, d3, _, Backbone, ForceLayoutNodeEmitter) {
       }
 
       this.trigger('newActiveNodesAndLinks', this, {
-        nodes: _.clone(this.allAuthorNodes),
+        //nodes: _.clone(this.allAuthorNodes),
+        nodes: _.values(authors),
         links: links
       });
     },

@@ -13,6 +13,8 @@
  *   [options.h]: {number} Height of SVG that view draws.  Defaults to element width of 500.
  *   [options.enterAtParent]: {boolean=true} If nodes have a .parent, new ones will enter at the parent's x,y.
  *                            Otherwise, nodes enter in the center of the forceview.
+ *   [options.enterCenterJitter]: {number} If nodes enter in the center of the forceview, their exact enter x,y will
+ *                                be +/- random number between 0 and enterCenterJitter.  Defaults 10.
  *   [options.animateExit]: {Object} Include to animation exitting nodes (falsey to make exitting nodes just disapear)
  *   [options.animateExit.msToFade]: {number} How many ms to wait before node exits
  *   [options.force.charge]: {number | function} pass-through to D3 force layout .charge()
@@ -57,6 +59,7 @@ return Backbone.View.extend({
       w: this.$el.width() || DEFAULT_W,
       h: this.$el.height() || DEFAULT_H,
       enterAtParent: true,
+      enterCenterJitter: 10,
       animateExit: {
         msToFade: 1000
       }
@@ -142,6 +145,9 @@ return Backbone.View.extend({
       if (opts.enterAtParent && d.parent) {
         d.x = d.px = d.parent.x;
         d.y = d.py = d.parent.y;
+      } else if (opts.enterCenterJitter) {
+        d.x = d.px = (self.options.w) / 2 + 2*opts.enterCenterJitter*Math.random() - opts.enterCenterJitter;
+        d.y = d.py = (self.options.h) / 2 + 2*opts.enterCenterJitter*Math.random() - opts.enterCenterJitter;
       } else {
         d.x = d.px = (self.options.w) / 2;
         d.y = d.py = (self.options.h) / 2;
