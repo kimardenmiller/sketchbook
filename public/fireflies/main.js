@@ -48,8 +48,15 @@ require(["/sketchbook_config.js"], function() { // load master configuration
         });
 
         window.sliderView = new SliderView({
-          authorNodeEmitter: authorNodeEmitter
+          max: authorNodeEmitter.getMaxAuthorTs(),
+          min: authorNodeEmitter.getMinAuthorTs()
         });
+
+        var currentTs;
+        sliderView.on('newSliderValue', function(value) { currentTs = value; });
+
+        // wire up the slider to the emitter
+        authorNodeEmitter.listenTo(sliderView, 'newSliderValue', authorNodeEmitter.emitAuthorsUpToTs);
 
         console.log("Ready to go.  Execute: try{ forceView.update() } catch(e) {console.log(e.stack); }");
 

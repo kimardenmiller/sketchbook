@@ -7,7 +7,8 @@
  *
  * Constructor:
  *
- * Attributes:
+ * Events:
+ *   "newSliderValue" ({number} value) Emitted when there's a new value from the slider
  *
  */
 define(["jquery", "d3", "lodash", "backbone",
@@ -26,11 +27,9 @@ return Backbone.View.extend({
   },
 
   initialize: function(opts) {
-    if (!opts.authorNodeEmitter)
-      throw new Error("AuthorNodeEmitter needed!");
 
-    this.max = this.options.authorNodeEmitter.getMaxAuthorTs();
-    this.min = this.options.authorNodeEmitter.getMinAuthorTs();
+    this.max = opts.max;
+    this.min = opts.min;
 
     this.render();
 
@@ -74,7 +73,7 @@ return Backbone.View.extend({
 
   onNewSliderValue: function(e, ui) {
     console.log("New slider value:", ui.value, new Date(ui.value));
-    this.options.authorNodeEmitter.emitAuthorsUpToTs(ui.value);
+    this.trigger('newSliderValue', ui.value);
   },
 
   render: function() {
