@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <meta property="og:title" content="Fireflies: A Dance of Discourse" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="http://sketchbook.onafloatingrock.com/fireflies" />
+  <meta property="og:image" content="http://sketchbook.onafloatingrock.com/fireflies/og.png" />
+
+  <title>Fireflies: A Dance of Discourse</title>
+
+
+  <link rel="stylesheet" href="/css/jquery-ui/jquery-ui-1.10.4.custom.min.css"/>
+
+  <style type="text/css">
+
+circle.node {
+  cursor: pointer;
+  stroke-width: 1.5px;
+}
+
+
+circle.node.highlight,
+circle.node.highlight.semihighlight { /* highlight "takes priority" over semihighlight */
+  stroke: red;
+  stroke-width: 1.5px;
+}
+
+circle.node.semihighlight {
+  stroke: red;
+  stroke-width: 1px;
+  stroke-opacity: .75;
+}
+
+line.link {
+  fill: none;
+  stroke: #ddd; /*#9ecae1;*/
+  stroke-width: 1.5px;
+}
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.highlight {
+  font-weight: bold;
+  border-bottom-width: 1px;
+  border-bottom-style: dotted;
+  cursor: help;
+}
+
+  </style>
+
+</head>
+
+<body style="padding-left: 30px;">
+
+  <script data-main="main" src="/lib/require.js"></script>
+
+  <div style="width: 75%;">
+    <h1 style="margin-bottom: 0">Fireflies:</h1>
+    <h2 style="margin-top: 0">A Dance of Discourse</h2>
+    <p>
+      Comment threads are often shown as hierarchical nested streams down the page.  Such a format takes a continual
+      back-and-forth between participants and neuters the interesting dynamics.  Here we focus not so much on the
+      content of a discussion, but rather the shape that the interactions make as participants dance and flash at each
+      other.
+    </p>
+  </div>
+
+  <div style="width: 100%;">
+    <div id="fireflies" >
+      <div id="timeline" style="width: 75%">
+        <div id="timeline_slider"></div>
+        <div><a href="#" class="play">Play</a> | <a href="#" class="pause">Pause</a></div>
+      </div>
+      <div id="force_view"></div>
+    </div>
+  </div>
+
+  <div>
+    <p>
+      Fork this sketch and remix it on my <a href="https://github.com/dlopuch/sketchbook">Github</a>
+      <a href="https://twitter.com/intent/tweet?screen_name=floatrock" class="twitter-mention-button" data-related="floatrock">Message me @floatrock</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    </p>
+  </div>
+
+
+<script>
+  // (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  // (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  // m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  // })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+//
+  // ga('create', 'UA-48401965-1', 'onafloatingrock.com');
+  //ga('send', 'pageview');
+
+</script>
+
+</body>
+</html>
+
