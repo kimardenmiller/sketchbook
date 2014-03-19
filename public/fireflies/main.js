@@ -33,7 +33,7 @@ require(["/sketchbook_config.js"], function() { // load master configuration
 
         window.authorNodeEmitter = new AuthorNodeEmitter(
           _.merge({
-            linkWindowPercentage: 0.01
+            linkWindowPercentage: 0.05
           }, authorNodesEtc)
         );
 
