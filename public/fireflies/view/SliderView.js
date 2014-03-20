@@ -18,6 +18,8 @@ var DEFAULT_W = 600,
     DEFAULT_H = 500,
     FORCE_VIEW_I = 0;
 
+var playCount = 0, pauseCount = 0, scrubCount = 0;
+
 return Backbone.View.extend({
   el: "#timeline",
 
@@ -38,10 +40,17 @@ return Backbone.View.extend({
     this.$("#timeline_slider").on('slidechange', onNewSliderValue); // mouseup, programatic value (ie play/pause)
   },
 
-  play: function(e) {
-    if (this.timer) {
+  play: function(e, forcePlay) {
+    if (this.timer && !forcePlay) {
       return this.pause(e);
     }
+
+    if (window.ga && !forcePlay) {
+      window.ga('send', 'event', 'fireflies', 'play timeline', ++playCount);
+    }
+
+    $('a.pause').show();
+    $('a.play').hide();
 
     var $sl = $("#timeline_slider"),
         self = this,
@@ -57,18 +66,25 @@ return Backbone.View.extend({
       $sl.slider('value', curVal + dir * 60000);
     }, 120); // must be larger than debounce!
 
-    e.preventDefault();
+    e && e.preventDefault();
   },
 
-  pause: function(e) {
-    if (!this.timer) {
+  pause: function(e, forcePause) {
+    if (!this.timer && !forcePause) {
       return this.play(e);
     }
+
+    if (window.ga && !forcePause) {
+      window.ga('send', 'event', 'fireflies', 'pause timeline', ++pauseCount);
+    }
+
+    $('a.play').show();
+    $('a.pause').hide();
 
     clearInterval(this.timer);
     delete this.timer;
 
-    e.preventDefault();
+    e && e.preventDefault();
   },
 
   onNewSliderValue: function(e, ui) {
@@ -83,6 +99,13 @@ return Backbone.View.extend({
       min: this.min,
       step: 2 * 60 * 1000
     });
+
+    this.$('#timeline_slider').on('mousedown', function() {
+      if (window.ga) {
+        window.ga('send', 'event', 'fireflies', 'user scrubbed timeline', ++scrubCount);
+      }
+    });
+
     return this;
   }
 });

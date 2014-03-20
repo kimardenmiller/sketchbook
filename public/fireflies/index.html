@@ -52,6 +52,15 @@ body {
   cursor: help;
 }
 
+.ephemeral {
+  color: #82b446;
+}
+
+.ephemeral > a {
+  border-bottom: 1px dotted #82b446;
+  cursor: pointer;
+}
+
   </style>
 
 </head>
@@ -64,10 +73,24 @@ body {
     <h1 style="margin-bottom: 0">Fireflies:</h1>
     <h2 style="margin-top: 0">A Dance of Discourse</h2>
     <p>
-      Comment threads are often shown as hierarchical nested streams down the page.  Such a format takes a continual
-      back-and-forth between participants and neuters the interesting dynamics.  Here we focus not so much on the
-      content of a discussion, but rather the shape that the interactions make as participants dance and flash at each
-      other.
+      Comment threads are often shown as hierarchical nested streams down the page.  Such a format loses out on
+      all of the interesting dynamics.  In this visualization, we focus not so much on the content of a discussion,
+      but rather the <i>shape</i> that the interactions make as participants dance and flash at each other: <i>the shape
+      of a conversation.</i>
+    </p>
+    <p>
+      Here we visualize <a href="http://www.reddit.com/r/science/comments/2058f5" target="_blank">some conversation thread</a>.
+      Nodes are authors, and the slider scrubs through time.  An author flashes red when they make a comment, and they
+      enter the visualization on their first comment (like a firefly joining in out of the dark).
+    </p>
+    <p>
+      Links between authors show reply chains between participants.  As partipants communicate with each other, a
+      network of conversation builds up.  However, conversations are dynamic and ephemeral; networks between authors
+      build up then fade away as the authors move on.  In this visualization, links disapear about 5 minutes after
+      the last comment in the conversation's branch is made.
+      <span class="ephemeral start"><a>See an example</a></span>
+      <span class="ephemeral drag" style="display:none;">Now drag a green node somewhere to start time.  Keep your eye on the green conversation branch.</span>
+      <span class="ephemeral restart" style="display:none;">Conversation structure is ephemeral.  <a>Restart</a>, or scrub time yourself.</span>
     </p>
   </div>
 
@@ -75,7 +98,7 @@ body {
     <div id="fireflies" >
       <div id="timeline" style="width: 75%">
         <div id="timeline_slider"></div>
-        <div><a href="#" class="play">Play</a> | <a href="#" class="pause">Pause</a></div>
+        <div><a href="#" class="play">Play</a> <a href="#" class="pause" style="display:none;">Pause</a></div>
       </div>
       <div id="force_view"></div>
     </div>
@@ -91,13 +114,13 @@ body {
 
 
 <script>
-  // (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  // (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  // m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  // })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-//
-  // ga('create', 'UA-48401965-1', 'onafloatingrock.com');
-  //ga('send', 'pageview');
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-48401965-1', 'onafloatingrock.com');
+  ga('send', 'pageview');
 
 </script>
 

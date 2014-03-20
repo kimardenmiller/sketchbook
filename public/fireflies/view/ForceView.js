@@ -160,9 +160,12 @@ return Backbone.View.extend({
     .attr("cx", function(d) { return d.x; })
     .attr("cy", function(d) { return d.y; })
     .call(this._setSelectionRadius)
-    .style("fill", this._colorNode)
     .on("click", this._clickNodeHandler)
-    .call(this.force.drag);
+    .call(this.force.drag)
+    .filter(function(d) {
+      return !d.isDemo;
+    })
+    .style("fill", this._colorNode);
 
 
     // -------------------
@@ -258,7 +261,7 @@ return Backbone.View.extend({
     });
   },
   _colorNode: function(d) {
-    return "steelblue";
+    return d.isDemo ? '#82b446' : "steelblue";
   }
 });
 });
