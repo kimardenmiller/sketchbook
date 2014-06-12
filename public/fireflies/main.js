@@ -2,7 +2,7 @@
 require(["/sketchbook_config.js"], function() { // load master configuration
 
   require(
-    ['jquery', 'lodash',
+    ['jquery', 'lodash', 'd3',
      'fireflies/promiseCommentTree',
      'fireflies/preparseTree',
      'fireflies/treeToAuthorNodes',
@@ -11,7 +11,7 @@ require(["/sketchbook_config.js"], function() { // load master configuration
      'fireflies/view/ForceView',
      'fireflies/view/SliderView'
     ],
-    function($, _, promiseCommentTree, preparseTree, treeToAuthorNodes,
+    function($, _, d3, promiseCommentTree, preparseTree, treeToAuthorNodes,
              AuthorNodeEmitter,
              ForceView,
 
