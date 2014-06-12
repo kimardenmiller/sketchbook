@@ -1,5 +1,5 @@
 
-define(["jquery", 'underscore'], function($, _) {
+define(["jquery", 'lodash'], function($, _) {
   var deferred = $.Deferred();
 
   // TODO: Shim to load data from pre-built JSON.  Later use the RedditParser to get dynamic comment trees.

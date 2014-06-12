@@ -1,4 +1,4 @@
-define(['underscore'], function(_) {
+define(['lodash', 'd3'], function(_, d3) {
 
   /**
    * This logic will apply misc. preparsing measures onto the comment node, useful for the visualizations
