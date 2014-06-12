@@ -48,7 +48,7 @@ return Backbone.View.extend({
   initialize: function(opts) {
     if (!this.model)
       throw new Error("ForceLayoutNodeEmitter required!");
-
+    debugger;
     this.listenTo(this.model, "newActiveNodesAndLinks", this.onNewActiveNodesAndLinks);
 
     // Every force view gets its own ID.  This is used to scope ForceView instance-specific state onto the node Objects

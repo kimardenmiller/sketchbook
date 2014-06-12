@@ -21,7 +21,7 @@ require.config({
     // jamjs sucks and is outdated.  Start adding manual js libraries.
     "lodash": "http://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash",
     "jquery": "http://code.jquery.com/jquery-2.0.3.min",
-    "backbone": "//cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.1/backbone-min",
+    "backbone": "//cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.10/backbone-min",
     "d3": "http://d3js.org/d3.v3.min",
 
 //    "d3": "/lib-user/d3.v3.3.2.min",
